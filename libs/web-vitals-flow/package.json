@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/web-vitals-flow",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Measure Core Web Vitals of page loads and same-origin link transitions with Lighthouse user flows, take the median of several runs, and fail when LCP, INP or CLS misses Lighthouse's passing score.",
   "keywords": [
     "cls",

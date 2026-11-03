@@ -19,6 +19,7 @@ const REACT_STATE_HOOKS: readonly string[] = [
 const HAND_WRITTEN_SQL = "SQL を手書きせず Drizzle のクエリビルダーを使う";
 const UI_STATE = "UI 状態は effect-atom だけで扱う";
 const INSTRUMENTATION = "計装は Effect のトレーシングだけで扱う";
+const INFRASTRUCTURE = "インフラは Alchemy の IaC と Cloudflare だけで扱い、wrangler は使わない";
 const OTLP_INTEROP_TESTS = "libs/vitest-otlp/src/**/*.test.ts";
 
 const requiredStack: Readonly<Record<string, readonly string[]>> = {
@@ -130,7 +131,7 @@ const requiredStack: Readonly<Record<string, readonly string[]>> = {
     "@vercel/flags",
   ],
   [INSTRUMENTATION]: ["@opentelemetry/*", "dd-trace", "newrelic"],
-  "インフラは Alchemy の IaC と Cloudflare だけで扱い、wrangler は使わない": [
+  [INFRASTRUCTURE]: [
     "wrangler",
     "miniflare",
     "@cloudflare/vite-plugin",
@@ -184,16 +185,18 @@ const restrictedImports = {
   patterns: [...requiredStackPatterns],
 };
 
-const restrictedImportsExcept = (message: string): typeof restrictedImports => ({
+const restrictedImportsExcept = (...messages: readonly string[]): typeof restrictedImports => ({
   paths: pipe(
     restrictedImports.paths,
-    Array.filter((path) => path.message !== message),
+    Array.filter((path) => !messages.includes(path.message)),
   ),
   patterns: pipe(
     restrictedImports.patterns,
-    Array.filter((pattern) => pattern.message !== message),
+    Array.filter((pattern) => !messages.includes(pattern.message)),
   ),
 });
+
+const OTLP_INTEROP_IMPORTS = restrictedImportsExcept(INSTRUMENTATION, INFRASTRUCTURE);
 
 const generated = [
   "**/routeTree.gen.ts",
@@ -274,6 +277,7 @@ const effectRules = asErrors(effectRuleNames);
 export type { Rules };
 export {
   INSTRUMENTATION,
+  OTLP_INTEROP_IMPORTS,
   OTLP_INTEROP_TESTS,
   baselineJsRules,
   decisionPluginName,
@@ -285,7 +289,6 @@ export {
   reactHooksRules,
   requiredStack,
   restrictedImports,
-  restrictedImportsExcept,
   shadcnRules,
   tanstackQueryRules,
   tanstackRouterRules,

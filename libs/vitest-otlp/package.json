@@ -29,6 +29,8 @@
     ".": "./src/index.ts",
     "./setup": "./src/setup.ts",
     "./semconv": "./src/semconv.ts",
+    "./workers": "./src/workers.ts",
+    "./tail-worker": "./src/tail.worker.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -45,6 +47,11 @@
         "types": "./dist/semconv.d.mts",
         "default": "./dist/semconv.mjs"
       },
+      "./workers": {
+        "types": "./dist/workers.d.mts",
+        "default": "./dist/workers.mjs"
+      },
+      "./tail-worker": "./dist/tail.worker.js",
       "./package.json": "./package.json"
     },
     "access": "public",
@@ -64,9 +71,11 @@
   "devDependencies": {
     "@bufbuild/buf": "catalog:",
     "@bufbuild/protoc-gen-es": "catalog:",
+    "@cloudflare/workers-types": "catalog:",
     "@opentelemetry/api": "catalog:",
     "@opentelemetry/sdk-node": "catalog:",
     "@types/node": "catalog:",
+    "miniflare": "catalog:",
     "vite-plus": "catalog:stack"
   },
   "peerDependencies": {

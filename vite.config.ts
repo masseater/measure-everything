@@ -3,7 +3,7 @@ import { defineConfig } from "vite-plus";
 
 import {
   OTLP_INTEROP_TESTS,
-  INSTRUMENTATION,
+  OTLP_INTEROP_IMPORTS,
   baselineJsRules,
   decisionPluginName,
   decisionRules,
@@ -13,7 +13,6 @@ import {
   htmlReactRules,
   reactHooksRules,
   restrictedImports,
-  restrictedImportsExcept,
   shadcnRules,
   tanstackQueryRules,
   tanstackRouterRules,
@@ -104,6 +103,7 @@ export default defineConfig({
             { from: "lib", name: "Request" },
             { from: "lib", name: "Response" },
             { from: "lib", name: "Uint8Array" },
+            { from: "lib", name: "Date" },
             {
               from: "package",
               package: "@bufbuild/protobuf",
@@ -111,6 +111,19 @@ export default defineConfig({
             },
             { from: "package", package: "lighthouse", name: ["FlowResult", "Step"] },
             { from: "package", package: "vitest", name: "TestProject" },
+            {
+              from: "package",
+              package: "@cloudflare/workers-types",
+              name: [
+                "TailEvent",
+                "Onset",
+                "Log",
+                "Exception",
+                "Attribute",
+                "SpanUpdateInfo",
+                "FetchResponseInfo",
+              ],
+            },
             { from: "package", package: "puppeteer-core", name: ["Browser", "Page"] },
             {
               from: "package",
@@ -191,8 +204,12 @@ export default defineConfig({
         rules: turnedOff(decisionRules),
       },
       {
-        files: ["libs/vitest-otlp/src/grpc.ts", "libs/vitest-otlp/src/forward.ts"],
-        rules: { "import/no-nodejs-modules": ["error", { allow: ["node:http2"] }] },
+        files: [
+          "libs/vitest-otlp/src/grpc.ts",
+          "libs/vitest-otlp/src/forward.ts",
+          "libs/vitest-otlp/src/workers.ts",
+        ],
+        rules: { "import/no-nodejs-modules": ["error", { allow: ["node:http2", "node:url"] }] },
       },
       {
         files: ["libs/vitest-otlp/src/setup.ts"],
@@ -204,7 +221,7 @@ export default defineConfig({
       {
         files: [OTLP_INTEROP_TESTS],
         rules: {
-          "eslint/no-restricted-imports": ["error", restrictedImportsExcept(INSTRUMENTATION)],
+          "eslint/no-restricted-imports": ["error", OTLP_INTEROP_IMPORTS],
         },
       },
     ],

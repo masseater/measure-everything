@@ -50,16 +50,49 @@ silently stops exporting is a regression.
 ## Which means to use
 
 For traces, metrics and logs of a Node.js process, use
-[OpenTelemetry zero-code instrumentation](https://opentelemetry.io/docs/zero-code/js/).
+[OpenTelemetry zero-code
+instrumentation](https://opentelemetry.io/docs/zero-code/js/).
 It is the `@opentelemetry/auto-instrumentations-node/register` preload,
 configured with `OTEL_*`.
 
 In Effect programs, use `Effect.fn` and `Effect.withSpan`. Export them with
 `OtlpTracer.layerFromConfig` from `effect/observability`.
 
-On Cloudflare Workers, turn on
-[Workers tracing](https://developers.cloudflare.com/workers/observability/traces/)
-with `observability.traces.enabled`. Export it to an OTLP destination.
+On Cloudflare, use the measurement the platform already has. Workers tracing,
+Workers logs and D1 query analytics cover most needs. Read
+[cloudflare.md](references/cloudflare.md) before you add any of them.
+
+For the duration of a Vitest run, turn on
+[`experimental.openTelemetry`](https://vitest.dev/guide/open-telemetry). Each
+test becomes a span, and spans created in a test join its trace.
+
+For Playwright tests, use
+[Playwright
+OpenTelemetry](https://endform.dev/blog/introducing-playwright-opentelemetry).
+Tests and their steps become spans, and the trace context reaches the app
+through the requests of the browser.
+
+For model calls through OpenRouter, turn on
+[Broadcast](https://openrouter.ai/docs/guides/features/broadcast/otel-collector)
+in its settings. It sends cost, tokens and latency of each call over OTLP
+without code changes.
+
+For Claude Code sessions, set `CLAUDE_CODE_ENABLE_TELEMETRY=1` with the usual
+`OTEL_*` variables. It exports metrics and events, as the
+[monitoring guide](https://code.claude.com/docs/en/monitoring-usage) describes.
+Traces are in beta and also need `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`.
+
+On Fly.io, read the
+[built-in metrics](https://fly.io/docs/monitoring/metrics/) from the managed
+Prometheus. The managed Grafana already has dashboards for them.
+
+To check that telemetry follows the semantic conventions, run the live-check of
+[OpenTelemetry Weaver](https://opentelemetry.io/blog/2025/otel-weaver/) in CI.
+It exits with 1 when it finds a violation.
+
+For the size of a published package, use
+[size-limit](https://github.com/ai/size-limit). Set the limit to the current
+size, so that any growth fails and its reason goes into the commit message.
 
 To assert in a test that telemetry was really exported, use
 [`@r_masseater/vitest-otlp`](https://github.com/masseater/measure-everything/tree/main/libs/vitest-otlp).

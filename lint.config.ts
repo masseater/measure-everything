@@ -208,6 +208,7 @@ const generated = [
   "AGENTS.md",
   "skills-lock.json",
   "CHANGELOG.md",
+  ".github/release-please/manifest.json",
 ];
 
 const decisionPluginName = decisionPlugin.meta.name;

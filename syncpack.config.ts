@@ -1,17 +1,30 @@
 import { Array, Record, pipe } from "effect";
 import type { RcFile } from "syncpack";
 
-import { requiredStack } from "./lint.config.ts";
+import { INSTRUMENTATION, requiredStack } from "./lint.config.ts";
 
 const config: RcFile = {
-  versionGroups: pipe(
-    Record.toEntries(requiredStack),
-    Array.map(([label, dependencies]) => ({
-      label,
-      dependencies: [...dependencies],
-      isBanned: true,
-    })),
-  ),
+  versionGroups: [
+    {
+      label: "OTLP の受け口は OpenTelemetry の SDK から送ってテストする",
+      dependencies: [...(requiredStack[INSTRUMENTATION] ?? [])],
+      packages: ["@r_masseater/vitest-otlp"],
+      dependencyTypes: ["dev"],
+    },
+    {
+      label: "OTLP の受け口のテストが使う OpenTelemetry の SDK の版",
+      dependencies: [...(requiredStack[INSTRUMENTATION] ?? [])],
+      packages: ["pnpm-workspace.yaml"],
+    },
+    ...pipe(
+      Record.toEntries(requiredStack),
+      Array.map(([label, dependencies]) => ({
+        label,
+        dependencies: [...dependencies],
+        isBanned: true as const,
+      })),
+    ),
+  ],
 };
 
 export default config;

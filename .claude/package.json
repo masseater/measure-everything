@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet"
+    "fallow": "fallow --skip dupes --fail-on-issues --quiet --format compact && fallow dupes --fail-on-issues --quiet --format compact && fallow security --fail-on-issues --quiet",
+    "prepare": "effect-tsgo patch --typescript --oxlint"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
@@ -15,6 +16,8 @@
     "effect": "catalog:stack"
   },
   "devDependencies": {
-    "@types/node": "catalog:"
+    "@effect/tsgo": "catalog:stack",
+    "@types/node": "catalog:",
+    "typescript": "catalog:stack"
   }
 }

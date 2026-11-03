@@ -74,79 +74,19 @@ jobs:
           gh workflow run autofix.yml --repo "$GITHUB_REPOSITORY" --ref "$HEAD_BRANCH"
           -f run_id="$FAILED_RUN_ID" -f branch="$HEAD_BRANCH" -f sha="$HEAD_SHA"
 
-  deploy:
-    needs: verify
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: deploy
-    steps:
-      - id: head
-        env:
-          GH_TOKEN: ${{ github.token }}
-          HEAD_SHA: ${{ github.sha }}
-          REF_NAME: ${{ github.ref_name }}
-        run: |
-          current="$(gh api "repos/$GITHUB_REPOSITORY/commits/$REF_NAME" --jq .sha)"
-          if [ "$current" = "$HEAD_SHA" ]; then
-            echo "latest=true" >> "$GITHUB_OUTPUT"
-          fi
-      - if: steps.head.outputs.latest == 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - if: steps.head.outputs.latest == 'true'
-        uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
-        with:
-          cache: true
-          run-install: |
-            - args: ['--frozen-lockfile']
-      - if: steps.head.outputs.latest == 'true'
-        run: .github/scripts/cloudflare-token.sh
-      - if: steps.head.outputs.latest == 'true'
-        run: vp exec alchemy deploy --stage production --yes
-        working-directory: apps/web
-
-  web-vitals:
-    needs: deploy
-    if: github.event_name == 'push' && vars.ZAP_TARGET_URL != ''
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
-        with:
-          cache: true
-          run-install: |
-            - args: ['--frozen-lockfile']
-      - run: vp run measure "$TARGET_URL"
-        working-directory: tools/web-vitals
-        env:
-          TARGET_URL: ${{ vars.ZAP_TARGET_URL }}
-      - if: always()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: web-vitals
-          path: tools/web-vitals/report/
-          if-no-files-found: ignore
-
   release:
     needs: verify
-    if: github.repository == 'masseater/typescript-template'
+    if: github.repository == 'masseater/measure-everything'
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
+      actions: write
     concurrency:
       group: release
     steps:
-      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+      - id: tagged
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
           config-file: .github/release-please/config.json
           manifest-file: .github/release-please/manifest.json
@@ -157,26 +97,8 @@ jobs:
           config-file: .github/release-please/config.json
           manifest-file: .github/release-please/manifest.json
           skip-github-release: true
-
-  ci-telemetry:
-    needs: [verify, autofix, deploy, web-vitals, release]
-    if: always()
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-          sparse-checkout: |
-            .github/scripts/ci-telemetry.sh
-            .github/scripts/cloudflare-token.sh
-            apps/web/app-name.ts
-          sparse-checkout-cone-mode: false
-      - if: github.ref == 'refs/heads/main'
-        run: .github/scripts/cloudflare-token.sh
-      - run: .github/scripts/ci-telemetry.sh
+      - if: steps.tagged.outputs.release_created == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tagged.outputs.tag_name }}
+        run: gh workflow run publish.yml --repo "$GITHUB_REPOSITORY" --ref main -f ref="$TAG"

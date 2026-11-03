@@ -1,0 +1,41 @@
+diff --git a/lib/index.d.ts b/lib/index.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..a2dab2c1383369a81dacf9fd454209d18df8a9f5
+--- /dev/null
++++ b/lib/index.d.ts
+@@ -0,0 +1,23 @@
++export interface MockOtlpServerOptions {
++  readonly logLevel?: "trace" | "debug" | "info" | "warn" | "error" | "fatal";
++  readonly services?: readonly ("http" | "grpc" | "ui")[];
++  readonly httpHostname?: string;
++  readonly httpPort?: number;
++  readonly grpcHostname?: string;
++  readonly grpcPort?: number;
++  readonly onTrace?: (trace: unknown) => void;
++  readonly onMetrics?: (metrics: unknown) => void;
++  readonly onLogs?: (logs: unknown) => void;
++}
++
++export declare class MockOtlpServer {
++  constructor(options: MockOtlpServerOptions);
++  readonly httpUrl: URL | null;
++  readonly grpcUrl: URL | null;
++  start(): Promise<void>;
++  close(): Promise<void>;
++}
++
++export declare function normalizeTrace(trace: unknown): unknown;
++export declare function normalizeMetrics(metrics: unknown): unknown;
++export declare function normalizeLogs(logs: unknown): unknown;
+diff --git a/package.json b/package.json
+index 9b1d3a725707df201076815399a2ed912e6877ee..18127522c669e3661b10d0794e56a9177cb80c89 100644
+--- a/package.json
++++ b/package.json
+@@ -47,6 +47,7 @@
+     "ui"
+   ],
+   "main": "lib/index.js",
++  "types": "lib/index.d.ts",
+   "bin": {
+     "mockotlpserver": "lib/cli.js"
+   },

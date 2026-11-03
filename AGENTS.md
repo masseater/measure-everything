@@ -3,31 +3,18 @@
 - コマンドは `vp` から実行し、`pnpm`・`npx` は直接使わない。`vp run <name>` は `package.json` と `vite.config.ts` のタスクで、組み込みコマンドとは別物である。
 - `vp run verify` が検査をまとめて流す。pre-push フックと Stop フックも同じ verify を走らせる。
 - `vp check` は oxlint-plugin-decision の判定に `.env` の `OPENROUTER_API_KEY` を使う。
-- テストを 1 つだけ走らせるときは、`apps/web` で `vp test run <ファイル>` を実行する。
-- D1 のスキーマは `*.table.ts` に書き、`apps/web` で `vp run db:generate` を実行してマイグレーションを作る。better-auth のテーブルは `vp run auth:generate` で生成する。
+- テストを 1 つだけ走らせるときは、そのパッケージで `vp test run <ファイル>` を実行する。
+- 各パッケージの `vp run build` は `vp pack` で `dist/` を作る。
 
 ## 構成
 
-- `apps/web` は TanStack Start のアプリである。`alchemy.run.ts` が D1 と Worker を定義し、Cloudflare にデプロイする。
-- API は Elysia で書く。`src/app/routes/api.$.ts` が `/api/*` を `src/app/server/api.server.ts` のルーターへ渡し、各スライスのルートは `index.server.ts` からそこへ足す。
-- クライアントは `shared/api` で Eden の型から TanStack Query のクエリを作る。SSR 中は `createIsomorphicFn` がルートの `handle` を直接呼ぶ。
-- `apps/lp` は静的な LP の見本で、`apps/web` のスタックが `Website.StaticSite` でデプロイする。
+- 計測の部品を `libs/<部品名>` に 1 つずつ置き、npm の `@r_masseater/<部品名>` で出す。部品は既存の計測の仕組み（OpenTelemetry、各ツールの公式の拡張点）を差し込むだけにし、計測の仕組みそのものは作らない。
+- 使う側は Vite+ と Node.js 26 以降だけを前提にする。`vite-plus` は peer に置き、`vitest` 単体などほかの環境向けの書き換えや分岐を足さない。
+- `libs/vitest-otlp` は、`setupFiles` でテストファイルごとに `@elastic/mockotlpserver` を空きポートで立て、`OTEL_*` の環境変数をそこへ向ける。受け取った OTLP は `effect` の Schema で平らな形に直して溜める。
 
-## 公開の静的ページ
+## 公開
 
-- 誰にでも見せるページで、リクエストごとに中身が変わらないものは `apps/lp` と同じ形で作る。TanStack Start のプリレンダーで HTML にし、`main` を渡さない `Website.StaticSite` で静的アセットだけとして配る。Worker の SSR、`runWorkerFirst`、R2 からの配信は使わない。
-- CSP は nonce に頼らない。`apps/lp/inline-scripts.ts` の Vite プラグインが inline の script を外部ファイルに出し、`security-headers` の `STATIC_PAGE_HEADERS` を `_headers` で付ける。
-
-## 環境変数
-
-- 環境変数は環境ごとに変わる値だけにする。変わらない値はコードか Alchemy の設定に、ツールにフラグがあればフラグにする。
-
-## Cloudflare
-
-- Workers Paid プランを前提にする。
-- ゾーンの WAF カスタムルールと Logpush のジョブは、masseater.dev ゾーンの持ち主の masseater/masseater.dev だけが持つ。ほかのリポは `OWNED_ZONE` を入れない。
-- Worker にはすべて `logpush: true` を付ける。
-- Bot Fight Mode は使わない。
+- main の verify が通ると release-please がタグを打ち、`publish.yml` が npm に出す。npm へは Trusted Publisher で出し、トークンを置かない。
 
 ## ライブラリ
 
@@ -47,20 +34,8 @@
 - ルールが使うモデルは、ユーザーの指示なしに変えない。
 - 確信できるものだけを違反にする。閾値を下げて取りこぼしを拾いにいかない。
 
-## 計測
-
-- 推測せず計測する。実装や修正の前に本番で事実を確かめ、その結果だけで判断する。
-- 機能開発の前に、AI が自分でデバッグできる仕組み（再現手段、ログやスパン、それを読む経路）を作る。
-- 時間かお金を使う処理はすべてスパンにする。Workers 以外は `OtlpTracer.layerFromConfig` で出す。計測のためだけにコマンドやプロセスを包まない。
-- ワークフローの最後には `.github/scripts/ci-telemetry.sh` を動かすジョブを置く。
-- アクセス解析は Cloudflare Web Analytics を既定で有効にする。Web Analytics のサイトはホストごとに Cloudflare の API で一度だけ作り、そのトークンを `alchemy.run.ts` の `CF_BEACON_TOKEN` に置く。CI のトークンに Account Settings Write を足さないため `Rum.Site` は使わない。トークンを、SSR のアプリは Worker の `CF_BEACON_TOKEN` から `start.ts` が HTML に足し、静的ページはビルド時の `VITE_CF_BEACON_TOKEN` から root の `head` で入れる。ゾーンの自動挿入は Workers の応答に効かない。
-- Web Vitals（LCP・INP・CLS・FCP・TTFB・TBT）は、`tools/web-vitals` で `vp run measure <URL>...` を実行して測る。各 URL の読み込みと、そのページの同じオリジンのリンクを押した遷移を Lighthouse の user flow で 5 回測り、`report/` に回ごとの flow-<回>.html と flow-<回>.json を書く。各ステップの中央値で LCP・INP・CLS のどれかが Lighthouse の合格点（0.9）に届かなければ失敗する。
-- main の verify はデプロイの後に `vars.ZAP_TARGET_URL` の本番を測り、レポートを Actions の成果物に残す。
-- クラウドのセッションでは `--chrome-flags="--no-sandbox --proxy-server=$HTTPS_PROXY"` を付ける。Chrome は session-start フックが `CHROME_PATH` で渡す。
-
 ## 脆弱性
 
-- ZAP のアラートは警告も含めすぐ直す。誤検知だけを `.github/zap/rules.tsv` に書く。
 - `audit` は `vp pm audit --fix` で直す。修正版の無い勧告だけを `audit.ignore` に載せ、理由をコミットメッセージに書く。
 
 ## 公開先

@@ -1,75 +1,97 @@
-# typescript-template
+# measure-everything
 
-Cloudflare で動く TypeScript の Web アプリを、検査・CI・デプロイ・AI エージェントとの作業の決まりが
-そろった状態から始めるための GitHub テンプレートである。
-新しいリポジトリを作るたびに、lint や CI やデプロイの仕組みを組み直さずに済む。
+AI 時代の開発でもっとも大事なものは、実装ではなく計測である。
+このリポジトリは、あらゆるものを既存の仕組みの上で計測できるようにする部品を集める。
+計測の仕組みそのものは作らず、OpenTelemetry と各ツールの公式の拡張点に差し込むだけにする。
+
+技術スタックは [Vite+](https://viteplus.dev/) と Node.js である。
+部品は `vite-plus` を peer に持ち、Vite+ のもとで動く。
+Node.js は 26 以降だけをサポートする。
 
 ## 公開先
 
-- テンプレートのままのアプリ: <https://typescript-template-web-production-ntesuocc46gilfjl.masseater.workers.dev>
-- 静的な LP の見本: <https://typescript-template-landingpagjng25skxokz4cknxsbi3m7nu.masseater.workers.dev>
+- npm: [@r_masseater/vitest-otlp](https://www.npmjs.com/package/@r_masseater/vitest-otlp)
 
-## 始めたときに入っているもの
+## 部品
 
-- TanStack Start と Effect で書く Web アプリ。D1 のデータベースと better-auth のログインを使える
-- 型検査・lint・テスト・依存の監査を 1 回で流す `vp run verify`
-- main に push すると、verify が通ったあとに Cloudflare へデプロイする GitHub Actions
-- Claude Code で作業するときのフックと作業の決まり
+### @r_masseater/vitest-otlp
 
-`apps/lp` は公開ページの見本の LP である。ビルド時に作った HTML を、Worker を通さずに配る。
+テストの中で OTLP を受け取り、送り出されたスパン・メトリクス・ログをアサートする
+Vitest のプラグインである。
+自動計装や `OTEL_*` の設定が正しく、テレメトリーが本当に外へ出ているかを、テストで確かめられる。
 
-## 使い方
+テストファイルごとに、空きポートで OTLP サーバー（HTTP と gRPC）を立てる。
+サーバーには Elastic の [@elastic/mockotlpserver][mockotlpserver] を使う。
 
-### 前提
+[mockotlpserver]: https://www.npmjs.com/package/@elastic/mockotlpserver
 
-- [Vite+](https://viteplus.dev/guide/) の `vp` コマンド
-- `gh`、uv、Go、Python 3、jq。verify の一部がこれらで動く
-- Workers Paid プランの Cloudflare アカウント
-- OpenRouter の API キー。verify の lint の一部が使う
+サーバーの場所は `OTEL_EXPORTER_OTLP_ENDPOINT` などの環境変数でテストに渡す。
+設定を環境変数から読む SDK は、コードを変えずにこのサーバーへ送る。
+テストから起動した子プロセスも、環境変数を受け継いで同じサーバーへ送る。
 
-### 1. テンプレートからリポジトリを作る
-
-```sh
-gh repo create <owner>/<name> --template masseater/typescript-template \
-  --private --clone
-cd <name>
-```
-
-### 2. アプリ名を変える
-
-`apps/web/app-name.ts` の `APP_NAME` を、リポジトリの名前に変える。
-同じ Cloudflare アカウントにある別のリポジトリと名前が重なると、互いのリソースを置き換え合う。
-
-### 3. 手元で動かす
+in-memory exporter と違い、OTLP の送信と環境変数の読み取りを本番と同じ経路で通す。
+コンテナで Collector や grafana/otel-lgtm を立てる方法と違い、Docker が要らない。
+受け取ったものは、テストの中でそのまま読める。
 
 ```sh
-vp env on
-vp install
-cp .env.example .env
-vp exec --filter web alchemy profile edit --add Cloudflare
+vp add -D @r_masseater/vitest-otlp
 ```
 
-`vp env on` で、リポジトリが求める版の Node.js と pnpm を vp が用意する。
-`.env` の `OPENROUTER_API_KEY` にキーを書く。
-Cloudflare の認証情報は、最後のコマンドで作る Alchemy のプロファイルに入る。
+```ts
+import { otlp } from "@r_masseater/vitest-otlp";
+import { defineConfig } from "vite-plus";
 
-```sh
-vp run verify
-cd apps/web && vp run dev
+export default defineConfig({
+  plugins: [otlp()],
+});
 ```
 
-verify が通り、dev が表示した URL を開いてアプリが出れば準備はできている。
+読み出しの API は Effect で書く。
 
-### 4. GitHub の設定をそろえる
+```ts
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { waitForSpans } from "@r_masseater/vitest-otlp";
+import { Effect } from "effect";
+import { expect, test } from "vite-plus/test";
 
-Actions の secrets、Actions による PR 作成の許可、既定ブランチのルールセットは、テンプレートから引き継がれない。
-[masseater/skills](https://github.com/masseater/skills) の `project-checklist` スキルの
-setup の手順で設定する。
+test("checkout is traced", () =>
+  Effect.gen(function* () {
+    const sdk = new NodeSDK();
+    sdk.start();
+    yield* checkout;
+    yield* Effect.promise(() => sdk.shutdown());
 
-設定が済めば、main への push のたびに本番へデプロイされる。
-手元からデプロイするときは `apps/web` で `vp run deploy` を実行する。
+    const spans = yield* waitForSpans({
+      where: (span) => span.name === "checkout",
+    });
+    expect(spans).toMatchObject([{ attributes: { "order.id": "o-1" } }]);
+  }).pipe(Effect.runPromise));
+```
 
-## テンプレートの更新を取り込む
+`waitForSpans`・`waitForLogs`・`waitForMetrics` は、`where` に合うものが
+`count` 件（既定 1）届くまで `interval`（既定 20 ms）ごとに読み直し、合うものをすべて返す。
+`timeout`（既定 5 秒）を過ぎると、届いた件数を添えた `TelemetryNotReceived` で失敗する。
+`receivedSpans`・`receivedLogs`・`receivedMetrics` は、そのテストファイルで今までに届いたものを返す。
+`clearTelemetry` は届いたものを捨て、`receiverAddress` はサーバーの
+`httpEndpoint` と `grpcEndpoint` を返す。
 
-作ったリポジトリで Claude Code のセッションを始めると、テンプレートの新しいリリースがあれば知らせが出る。
-取り込むと答えれば、前のリリースとの差分を当てて verify を通すところまで進む。
+属性は `{ "order.id": "o-1" }` のような平らなオブジェクトに、ID は 16 進の文字列に直してある。
+スパンとログには、`resource`（リソースの属性）と `scope`（計装のスコープ）が付く。
+
+`OTEL_EXPORTER_OTLP_ENDPOINT` には、サーバーの HTTP の URL を入れる。
+`OTEL_EXPORTER_OTLP_PROTOCOL` が `grpc` なら、gRPC の URL を入れる。
+`OTEL_TRACES_EXPORTER`・`OTEL_METRICS_EXPORTER`・`OTEL_LOGS_EXPORTER` は `otlp` にする。
+送信を待つ時間は、未設定のときだけ短くする。
+`OTEL_BSP_SCHEDULE_DELAY` と `OTEL_BLRP_SCHEDULE_DELAY` は 50 にする。
+`OTEL_METRIC_EXPORT_INTERVAL` と `OTEL_METRIC_EXPORT_TIMEOUT` は 100 にする。
+
+信号ごとの `OTEL_EXPORTER_OTLP_<信号>_ENDPOINT` は空にし、テストのテレメトリーを外の
+Collector へ漏らさない。
+
+テストファイルが終わるとサーバーは閉じる。
+そのため、`isolate: false` で複数のファイルが SDK を使い回すと、
+2 つ目以降のファイルのテレメトリーは届かない。
+
+## ライセンス
+
+MIT

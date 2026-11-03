@@ -1,8 +1,9 @@
-import tanstackStart from "@r_masseater/oxlint-typed-rules/tanstack-start";
 import baselineJs from "eslint-plugin-baseline-js";
 import { defineConfig } from "vite-plus";
 
 import {
+  OTLP_INTEROP_TESTS,
+  INSTRUMENTATION,
   baselineJsRules,
   decisionPluginName,
   decisionRules,
@@ -10,9 +11,9 @@ import {
   eslintReactRules,
   generated,
   htmlReactRules,
-  pluginRules,
   reactHooksRules,
   restrictedImports,
+  restrictedImportsExcept,
   shadcnRules,
   tanstackQueryRules,
   tanstackRouterRules,
@@ -59,10 +60,6 @@ export default defineConfig({
       { name: "vite-plus", specifier: "vite-plus/oxlint-plugin" },
       { name: "tanstack-query", specifier: "@tanstack/eslint-plugin-query" },
       { name: "tanstack-router", specifier: "@tanstack/eslint-plugin-router" },
-      {
-        name: tanstackStart.meta.name,
-        specifier: "@r_masseater/oxlint-typed-rules/tanstack-start",
-      },
       { name: "drizzle", specifier: "eslint-plugin-drizzle" },
       { name: "react-hooks-js", specifier: "eslint-plugin-react-hooks" },
       { name: "@eslint-react", specifier: "@eslint-react/eslint-plugin" },
@@ -78,7 +75,6 @@ export default defineConfig({
       "no-comments/disallowComments": ["error", { allow: ["oxlint-disable", "eslint-disable"] }],
       ...tanstackQueryRules,
       ...tanstackRouterRules,
-      ...pluginRules(tanstackStart),
       "drizzle/enforce-delete-with-where": "error",
       "drizzle/enforce-update-with-where": "error",
       ...shadcnRules,
@@ -146,7 +142,7 @@ export default defineConfig({
             {
               from: "package",
               package: "effect",
-              name: ["Cause", "Context", "Effect", "Exit", "Layer", "Option"],
+              name: ["Cause", "Context", "Duration", "Effect", "Exit", "Layer", "Option"],
             },
           ],
         },
@@ -211,6 +207,19 @@ export default defineConfig({
         files: ["**/*.test.ts"],
         rules: turnedOff(decisionRules),
       },
+      {
+        files: ["libs/vitest-otlp/src/setup.ts"],
+        rules: {
+          "node/no-process-env": "off",
+          "baseline-js/use-baseline": ["error", { ignoreFeatures: ["top-level-await"] }],
+        },
+      },
+      {
+        files: [OTLP_INTEROP_TESTS],
+        rules: {
+          "eslint/no-restricted-imports": ["error", restrictedImportsExcept(INSTRUMENTATION)],
+        },
+      },
     ],
     settings: {
       [decisionPluginName]: { model: "openrouter/typesafe/jev-1.14" },
@@ -261,16 +270,12 @@ export default defineConfig({
           "markdown-lint",
           "renovate",
           "actions-lint",
-          "steiger-all",
-          "db-check-all",
           "fallow-all",
           "audit",
         ],
       },
       "test-all": "vp run -r test",
       syncpack: "syncpack lint",
-      "steiger-all": "vp run -r steiger",
-      "db-check-all": "vp run -r db:check",
       "fallow-all": "vp run -r fallow",
       audit: {
         command:

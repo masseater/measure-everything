@@ -110,6 +110,7 @@ export default defineConfig({
               name: ["DescMessage", "JsonObject", "JsonValue", "Message"],
             },
             { from: "package", package: "lighthouse", name: ["FlowResult", "Step"] },
+            { from: "package", package: "vitest", name: "TestProject" },
             { from: "package", package: "puppeteer-core", name: ["Browser", "Page"] },
             {
               from: "package",
@@ -190,7 +191,7 @@ export default defineConfig({
         rules: turnedOff(decisionRules),
       },
       {
-        files: ["libs/vitest-otlp/src/grpc.ts"],
+        files: ["libs/vitest-otlp/src/grpc.ts", "libs/vitest-otlp/src/forward.ts"],
         rules: { "import/no-nodejs-modules": ["error", { allow: ["node:http2"] }] },
       },
       {

@@ -28,6 +28,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./setup": "./src/setup.ts",
+    "./semconv": "./src/semconv.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -39,6 +40,10 @@
       "./setup": {
         "types": "./dist/setup.d.mts",
         "default": "./dist/setup.mjs"
+      },
+      "./semconv": {
+        "types": "./dist/semconv.d.mts",
+        "default": "./dist/semconv.mjs"
       },
       "./package.json": "./package.json"
     },

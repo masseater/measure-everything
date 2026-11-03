@@ -88,7 +88,8 @@ Prometheus. The managed Grafana already has dashboards for them.
 
 To check that telemetry follows the semantic conventions, run the live-check of
 [OpenTelemetry Weaver](https://opentelemetry.io/blog/2025/otel-weaver/) in CI.
-It exits with 1 when it finds a violation.
+It exits with 1 when it finds a violation. Tests that export telemetry can run
+the same check. Pass `semconv: true` to `otlp()` of `@r_masseater/vitest-otlp`.
 
 For the size of a published package, use
 [size-limit](https://github.com/ai/size-limit). Set the limit to the current

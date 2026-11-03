@@ -2,6 +2,7 @@ import type { DescMessage, JsonValue, Message } from "@bufbuild/protobuf";
 import { create, fromBinary, fromJson, toBinary, toJson } from "@bufbuild/protobuf";
 import { Effect, Option, Predicate, Schema } from "effect";
 
+import type { ForwardFailed } from "./forward.ts";
 import {
   ExportLogsServiceRequestSchema,
   ExportLogsServiceResponseSchema,
@@ -61,27 +62,35 @@ const malformed = (cause: unknown): MalformedExport =>
 
 const decodeJsonText = Schema.decodeUnknownEffect(Schema.fromJsonString(Schema.MutableJson));
 
-const normalized =
-  (endpoint: Endpoint) =>
-  (read: () => Message): Effect.Effect<JsonValue, MalformedExport> =>
-    Effect.try({ try: () => normalize(toJson(endpoint.request, read())), catch: malformed });
+const parse = (read: () => Message): Effect.Effect<Message, MalformedExport> =>
+  Effect.try({ try: read, catch: malformed });
 
 const fromProtobuf =
   (endpoint: Endpoint) =>
-  (body: Uint8Array): Effect.Effect<JsonValue, MalformedExport> =>
-    normalized(endpoint)(() => fromBinary(endpoint.request, body));
+  (body: Uint8Array): Effect.Effect<Message, MalformedExport> =>
+    parse(() => fromBinary(endpoint.request, body));
 
 const fromOtlpJson =
   (endpoint: Endpoint) =>
-  (body: Uint8Array): Effect.Effect<JsonValue, MalformedExport> =>
+  (body: Uint8Array): Effect.Effect<Message, MalformedExport> =>
     decodeJsonText(new TextDecoder().decode(body)).pipe(
       Effect.mapError(malformed),
       Effect.flatMap((json) =>
-        normalized(endpoint)(() =>
+        parse(() =>
           fromJson(endpoint.request, hexIdsToBase64(json), { ignoreUnknownFields: true }),
         ),
       ),
     );
+
+const normalized =
+  (endpoint: Endpoint) =>
+  (message: Message): Effect.Effect<JsonValue, MalformedExport> =>
+    Effect.try({ try: () => normalize(toJson(endpoint.request, message)), catch: malformed });
+
+const encoded =
+  (endpoint: Endpoint) =>
+  (message: Message): Uint8Array =>
+    toBinary(endpoint.request, message);
 
 const gunzip = (body: Uint8Array): Effect.Effect<Uint8Array, MalformedExport> =>
   Effect.tryPromise({
@@ -103,7 +112,9 @@ const gunzipWhen =
       },
     );
 
-type Store = (endpoint: Endpoint) => (normalized: JsonValue) => Effect.Effect<void>;
+type Store = (
+  endpoint: Endpoint,
+) => (message: Message) => Effect.Effect<void, MalformedExport | ForwardFailed>;
 
 const LOOPBACK = "127.0.0.1";
 
@@ -119,6 +130,8 @@ const emptyResponse = (endpoint: Endpoint): Uint8Array =>
 export {
   ENDPOINTS,
   MalformedExport,
+  encoded,
+  normalized,
   emptyResponse,
   fromOtlpJson,
   fromProtobuf,

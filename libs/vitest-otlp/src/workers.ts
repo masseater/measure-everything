@@ -23,9 +23,11 @@ interface TailWorker {
 interface TailWorkerOptions {
   readonly name?: string;
   readonly compatibilityDate?: string;
+  readonly serviceName?: string;
 }
 
 const DEFAULT_NAME = "vitest-otlp-tail";
+const DEFAULT_SERVICE_NAME = "worker";
 const DEFAULT_COMPATIBILITY_DATE = "2026-07-01";
 const ENTRY = "@r_masseater/vitest-otlp/tail-worker";
 const WORKER_CONDITIONS = ["workerd", "worker", "browser", "import", "default"];
@@ -74,13 +76,17 @@ const bundle: Effect.Effect<string, TailWorkerBuildFailed> = Effect.tryPromise({
 const tailWorker = ({
   name = DEFAULT_NAME,
   compatibilityDate = DEFAULT_COMPATIBILITY_DATE,
+  serviceName = DEFAULT_SERVICE_NAME,
 }: TailWorkerOptions = {}): Effect.Effect<TailWorker, TailWorkerBuildFailed | ReceiverNotRunning> =>
   Effect.all([bundle, currentReceiver]).pipe(
     Effect.map(([contents, receiver]) => ({
       name,
       compatibilityDate,
       modules: [{ type: "ESModule", path: "tail.worker.mjs", contents }],
-      bindings: { OTEL_EXPORTER_OTLP_ENDPOINT: receiver.address.httpEndpoint },
+      bindings: {
+        OTEL_EXPORTER_OTLP_ENDPOINT: receiver.address.httpEndpoint,
+        OTEL_SERVICE_NAME: serviceName,
+      },
     })),
   );
 

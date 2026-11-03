@@ -36,7 +36,6 @@ interface Invocation {
   readonly logs: readonly LogDraft[];
 }
 
-const DEFAULT_SERVICE_NAME = "worker";
 const NANOS_PER_MILLI = 1_000_000n;
 
 const SEVERITIES: Readonly<Record<TailStream.Log["level"], SeverityNumber>> = {
@@ -155,9 +154,9 @@ const opened = (tail: TailEvent, opening: Opening): Draft => ({
   status: Status_StatusCode.UNSET,
 });
 
-const onOnset = (tail: TailEvent, onset: TailStream.Onset): Invocation => ({
+const onOnset = (invocation: Invocation, tail: TailEvent, onset: TailStream.Onset): Invocation => ({
   traceId: tail.spanContext.traceId,
-  serviceName: onset.scriptName ?? DEFAULT_SERVICE_NAME,
+  serviceName: onset.scriptName ?? invocation.serviceName,
   spans: {
     [onset.spanId]: {
       ...opened(tail, { spanId: onset.spanId, name: onset.info.type, kind: Span_SpanKind.SERVER }),
@@ -188,7 +187,7 @@ const step = (invocation: Invocation, tail: TailEvent): Invocation => {
   const end = nanos(tail.timestamp);
   return Match.value(tail.event).pipe(
     Match.discriminatorsExhaustive("type")({
-      onset: (onset) => onOnset(tail, onset),
+      onset: (onset) => onOnset(invocation, tail, onset),
       spanOpen: (open) =>
         addSpan(opened(tail, { spanId: open.spanId, name: open.name, kind: Span_SpanKind.CLIENT }))(
           invocation,
@@ -207,15 +206,15 @@ const step = (invocation: Invocation, tail: TailEvent): Invocation => {
   );
 };
 
-const EMPTY: Invocation = { traceId: "", serviceName: DEFAULT_SERVICE_NAME, spans: {}, logs: [] };
-
-const invocationOf = (events: readonly TailEvent[]): Invocation => {
-  let invocation = EMPTY;
-  for (const tail of events) {
-    invocation = step(invocation, tail);
-  }
-  return invocation;
-};
+const invocationOf =
+  (serviceName: string) =>
+  (events: readonly TailEvent[]): Invocation => {
+    let invocation: Invocation = { traceId: "", serviceName, spans: {}, logs: [] };
+    for (const tail of events) {
+      invocation = step(invocation, tail);
+    }
+    return invocation;
+  };
 
 export { invocationOf };
 export type { Draft, Invocation, LogDraft, TailEvent };

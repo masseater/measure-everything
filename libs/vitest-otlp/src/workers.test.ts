@@ -14,7 +14,7 @@ const APP = `export default {
 };`;
 
 const withMiniflare = Effect.acquireRelease(
-  tailWorker().pipe(
+  tailWorker({ serviceName: "app" }).pipe(
     Effect.map(
       (tail) =>
         new Miniflare({
@@ -46,6 +46,7 @@ test("a Worker's automatic spans and logs reach the receiver through a streaming
     expect(server).toMatchObject({
       kind: "SPAN_KIND_SERVER",
       attributes: { "http.request.method": "GET", "url.full": "http://localhost/" },
+      resource: { "service.name": "app" },
     });
 
     const kv = yield* waitForSpans({ where: (span) => span.name === "kv_put" });

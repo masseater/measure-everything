@@ -12,6 +12,7 @@ import { logsOf, tracesOf } from "./tail-otlp.ts";
 
 interface Env {
   readonly OTEL_EXPORTER_OTLP_ENDPOINT: string;
+  readonly OTEL_SERVICE_NAME: string;
 }
 
 const PROTOBUF_CONTENT_TYPE = "application/x-protobuf";
@@ -44,7 +45,7 @@ const runtime = ManagedRuntime.make(FetchHttpClient.layer);
 const tailStream = (onset: TailEvent, env: Env): ((event: TailEvent) => Promise<unknown>) => {
   const events: TailEvent[] = [onset];
   const exportAll = Effect.suspend(() =>
-    exportInvocation(env.OTEL_EXPORTER_OTLP_ENDPOINT, invocationOf(events)),
+    exportInvocation(env.OTEL_EXPORTER_OTLP_ENDPOINT, invocationOf(env.OTEL_SERVICE_NAME)(events)),
   );
   return (event) => {
     events.push(event);

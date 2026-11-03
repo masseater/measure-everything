@@ -1,12 +1,9 @@
 # measure-everything
 
-AI 時代の開発でもっとも大事なものは、実装ではなく計測である。
-このリポジトリは、あらゆるものを既存の仕組みの上で計測できるようにする部品を集める。
-計測の仕組みそのものは作らず、OpenTelemetry と各ツールの公式の拡張点に差し込むだけにする。
+あらゆるものを既存の仕組みの上で計測できるようにする部品を集めたリポジトリである。
+計測の仕組みそのものは作らず、OpenTelemetry と各ツールの公式の拡張点に差し込む。
 
-技術スタックは [Vite+](https://viteplus.dev/) と Node.js である。
-部品は `vite-plus` を peer に持ち、Vite+ のもとで動く。
-Node.js は 26 以降だけをサポートする。
+部品は [Vite+](https://viteplus.dev/) と Node.js 26 以降で動く。`vite-plus` を peer に持つ。
 
 ## 公開先
 
@@ -78,15 +75,14 @@ test("checkout is traced", () =>
 属性は `{ "order.id": "o-1" }` のような平らなオブジェクトに、ID は 16 進の文字列に直してある。
 スパンとログには、`resource`（リソースの属性）と `scope`（計装のスコープ）が付く。
 
-`OTEL_EXPORTER_OTLP_ENDPOINT` には、サーバーの HTTP の URL を入れる。
-`OTEL_EXPORTER_OTLP_PROTOCOL` が `grpc` なら、gRPC の URL を入れる。
-`OTEL_TRACES_EXPORTER`・`OTEL_METRICS_EXPORTER`・`OTEL_LOGS_EXPORTER` は `otlp` にする。
-送信を待つ時間は、未設定のときだけ短くする。
-`OTEL_BSP_SCHEDULE_DELAY` と `OTEL_BLRP_SCHEDULE_DELAY` は 50 にする。
-`OTEL_METRIC_EXPORT_INTERVAL` と `OTEL_METRIC_EXPORT_TIMEOUT` は 100 にする。
+プラグインは、テストに渡す環境変数を次のように変える。
 
-信号ごとの `OTEL_EXPORTER_OTLP_<信号>_ENDPOINT` は空にし、テストのテレメトリーを外の
-Collector へ漏らさない。
+- `OTEL_EXPORTER_OTLP_ENDPOINT`: サーバーの HTTP の URL。
+  `OTEL_EXPORTER_OTLP_PROTOCOL` が `grpc` なら gRPC の URL
+- `OTEL_TRACES_EXPORTER`・`OTEL_METRICS_EXPORTER`・`OTEL_LOGS_EXPORTER`: `otlp`
+- `OTEL_BSP_SCHEDULE_DELAY`・`OTEL_BLRP_SCHEDULE_DELAY`: 50。未設定のときだけ
+- `OTEL_METRIC_EXPORT_INTERVAL`・`OTEL_METRIC_EXPORT_TIMEOUT`: 100。未設定のときだけ
+- 信号ごとの `OTEL_EXPORTER_OTLP_<信号>_ENDPOINT`: 空。テストのテレメトリーを外の Collector へ漏らさない
 
 テストファイルが終わるとサーバーは閉じる。
 そのため、`isolate: false` で複数のファイルが SDK を使い回すと、

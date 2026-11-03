@@ -162,7 +162,9 @@ test("caching writes to KV", () =>
 
 The invocation becomes a server span named after its trigger, such as `fetch`.
 Each traced call becomes a client span under it, and `console` calls become log
-records in the same trace.
+records in the same trace. The resource `service.name` is the script name of
+the Worker. Miniflare reports no script name, so pass `serviceName` to
+`tailWorker()` instead.
 
 ## License
 

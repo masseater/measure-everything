@@ -109,14 +109,16 @@ jobs:
 
   ci-telemetry:
     needs: [verify, autofix, release]
-    if: always() && vars.OTEL_EXPORTER_OTLP_ENDPOINT != ''
+    if: always()
     runs-on: ubuntu-latest
     permissions:
       actions: read
+      contents: read
+      id-token: write
     steps:
-      - uses: corentinmusard/otel-cicd-action@4826b79d63662fa91657272e7711420cb6aea543 # v4.2.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          otlpEndpoint: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
-          otlpHeaders: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
-          otelServiceName: ${{ github.repository }}
-          githubToken: ${{ github.token }}
+          persist-credentials: false
+      - run: .github/scripts/ci-telemetry.sh
+        env:
+          GH_TOKEN: ${{ github.token }}

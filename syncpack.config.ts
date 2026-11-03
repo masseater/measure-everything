@@ -16,6 +16,17 @@ const config: RcFile = {
       dependencies: [...(requiredStack[INSTRUMENTATION] ?? [])],
       packages: ["pnpm-workspace.yaml"],
     },
+    {
+      label: "Workers のスパンは Miniflare で Worker を動かしてテストする",
+      dependencies: ["miniflare"],
+      packages: ["@r_masseater/vitest-otlp"],
+      dependencyTypes: ["dev"],
+    },
+    {
+      label: "Workers のスパンのテストが使う Miniflare の版",
+      dependencies: ["miniflare"],
+      packages: ["pnpm-workspace.yaml"],
+    },
     ...pipe(
       Record.toEntries(requiredStack),
       Array.map(([label, dependencies]) => ({

@@ -5,6 +5,9 @@
   "failOnParseError": true,
   "ignorePatterns": [".claude/**"],
   "ignoreExports": [{ "file": "libs/vitest-otlp/src/generated/**", "exports": ["*"] }],
+  "overrides": [
+    { "files": ["libs/vitest-otlp/src/generated/**"], "rules": { "unused-enum-members": "off" } },
+  ],
   "audit": { "gate": "all" },
   "security": {
     "categories": {

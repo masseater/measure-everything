@@ -23,6 +23,7 @@
           "effect/http/HttpClient#execute",
           "effect/http/HttpClientError#HttpClientError",
           "effect/http/HttpClientRequest#bodyText",
+          "effect/http/HttpClientRequest#bodyUint8Array",
           "effect/http/HttpClientRequest#get",
           "effect/http/HttpClientRequest#post",
           "effect/observability/Otlp#layerFromConfig",

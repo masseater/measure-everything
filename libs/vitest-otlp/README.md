@@ -125,6 +125,45 @@ Actions, the
 [setup-weaver](https://github.com/open-telemetry/weaver/tree/main/.github/actions/setup-weaver)
 action installs it.
 
+## Cloudflare Workers
+
+Workers trace KV, D1, R2 and `fetch` calls without code changes, and hand the
+spans and logs to a
+[streaming tail worker](https://developers.cloudflare.com/workers/observability/logs/tail-workers/).
+`tailWorker()` from `@r_masseater/vitest-otlp/workers` builds a tail worker for
+[Miniflare](https://developers.cloudflare.com/workers/testing/miniflare/). It
+turns each invocation into OTLP and sends it to the receiver of the test file.
+
+```ts
+import { waitForSpans } from "@r_masseater/vitest-otlp";
+import { tailWorker } from "@r_masseater/vitest-otlp/workers";
+import { Effect } from "effect";
+import { Miniflare } from "miniflare";
+
+test("caching writes to KV", () =>
+  Effect.gen(function* () {
+    const tail = yield* tailWorker();
+    const miniflare = new Miniflare({
+      workers: [
+        {
+          name: "app",
+          scriptPath: "worker.js",
+          kvNamespaces: ["CACHE"],
+          streamingTails: [tail.name],
+        },
+        tail,
+      ],
+    });
+    yield* Effect.promise(() => miniflare.dispatchFetch("http://localhost/"));
+    yield* waitForSpans({ where: (span) => span.name === "kv_put" });
+    yield* Effect.promise(() => miniflare.dispose());
+  }).pipe(Effect.runPromise));
+```
+
+The invocation becomes a server span named after its trigger, such as `fetch`.
+Each traced call becomes a client span under it, and `console` calls become log
+records in the same trace.
+
 ## License
 
 MIT

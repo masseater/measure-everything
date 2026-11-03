@@ -98,6 +98,9 @@ size, so that any growth fails and its reason goes into the commit message.
 To assert in a test that telemetry was really exported, use
 [`@r_masseater/vitest-otlp`](https://github.com/masseater/measure-everything/tree/main/libs/vitest-otlp).
 
+To test the automatic spans of a Worker, run it in Miniflare with
+`tailWorker()` of `@r_masseater/vitest-otlp/workers`.
+
 For Web Vitals of page loads and same-origin link transitions, use
 [`@r_masseater/web-vitals-flow`](https://github.com/masseater/measure-everything/tree/main/libs/web-vitals-flow).
 Read [web-vitals.md](references/web-vitals.md) before you run it.

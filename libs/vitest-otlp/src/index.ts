@@ -1,6 +1,8 @@
-import { Array, Duration, Effect, Predicate, Schedule, Schema, pipe } from "effect";
+import { Array, Duration, Effect, Option, Predicate, Schedule, Schema, pipe } from "effect";
 import type { Plugin } from "vite-plus";
 
+import { SEMCONV_KEY } from "./context.ts";
+import type { ResolvedSemconv, SemconvOptions } from "./context.ts";
 import { decodeLogs, decodeMetrics, decodeSpans } from "./otlp-schema.ts";
 import type { SignalKey } from "./requests.ts";
 import type { ReceiverNotRunning } from "./store.ts";
@@ -39,9 +41,38 @@ const DEFAULT_TIMEOUT = Duration.seconds(DEFAULT_TIMEOUT_SECONDS);
 const DEFAULT_INTERVAL = Duration.millis(DEFAULT_INTERVAL_MILLIS);
 const ONE = 1;
 
-const otlp = (): Plugin => ({
+const DEFAULT_SEMCONV: ResolvedSemconv = {
+  registry: "https://github.com/open-telemetry/semantic-conventions.git@v1.45.0[model]",
+  weaver: "weaver",
+  failOn: "violation",
+};
+
+interface OtlpOptions {
+  readonly semconv?: SemconvOptions | true;
+}
+
+const semconvConfig = (semconv: SemconvOptions | true): ResolvedSemconv => ({
+  ...DEFAULT_SEMCONV,
+  ...Option.getOrElse(
+    Option.liftPredicate(semconv, (options) => options !== true),
+    () => ({}),
+  ),
+});
+
+const otlp = (options: OtlpOptions = {}): Plugin => ({
   name: "@r_masseater/vitest-otlp",
-  config: () => ({ test: { setupFiles: ["@r_masseater/vitest-otlp/setup"] } }),
+  config: () => ({
+    test: {
+      setupFiles: ["@r_masseater/vitest-otlp/setup"],
+      ...Option.match(Option.fromNullishOr(options.semconv), {
+        onNone: () => ({}),
+        onSome: (semconv) => ({
+          globalSetup: ["@r_masseater/vitest-otlp/semconv"],
+          provide: { [SEMCONV_KEY]: semconvConfig(semconv) },
+        }),
+      }),
+    },
+  }),
 });
 
 const signal = <Item>(
@@ -126,4 +157,5 @@ export type {
   ReceivedSpan,
   ReceiverAddress,
 } from "./telemetry.ts";
-export type { ReadError, WaitOptions };
+export type { OtlpOptions, ReadError, WaitOptions };
+export type { SemconvLevel, SemconvOptions } from "./context.ts";

@@ -1,4 +1,4 @@
-import type { JsonValue } from "@bufbuild/protobuf";
+import type { Message } from "@bufbuild/protobuf";
 import { NodeHttpServer } from "@effect/platform-node";
 import type { Scope } from "effect";
 import { Array, Context, Effect, Layer, Option, String, pipe } from "effect";
@@ -17,13 +17,14 @@ import {
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_NOT_FOUND = 404;
+const HTTP_SERVICE_UNAVAILABLE = 503;
 const JSON_CONTENT_TYPE = "application/json";
 const PROTOBUF_CONTENT_TYPE = "application/x-protobuf";
 
 interface Encoding {
   readonly decode: (
     endpoint: Endpoint,
-  ) => (body: Uint8Array) => Effect.Effect<JsonValue, MalformedExport>;
+  ) => (body: Uint8Array) => Effect.Effect<Message, MalformedExport>;
   readonly respond: (endpoint: Endpoint) => HttpServerResponse.HttpServerResponse;
 }
 
@@ -63,9 +64,14 @@ const receive =
       yield* store(endpoint)(yield* encoding.decode(endpoint)(body));
       return encoding.respond(endpoint);
     }).pipe(
-      Effect.catchTag("MalformedExport", (malformed) =>
-        Effect.succeed(HttpServerResponse.text(malformed.message, { status: HTTP_BAD_REQUEST })),
-      ),
+      Effect.catchTags({
+        MalformedExport: (malformed) =>
+          Effect.succeed(HttpServerResponse.text(malformed.message, { status: HTTP_BAD_REQUEST })),
+        ForwardFailed: (unforwarded) =>
+          Effect.succeed(
+            HttpServerResponse.text(unforwarded.message, { status: HTTP_SERVICE_UNAVAILABLE }),
+          ),
+      }),
     );
 
 const exportRequest = (

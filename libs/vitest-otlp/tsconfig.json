@@ -23,10 +23,12 @@
           "effect/http/HttpClient#execute",
           "effect/http/HttpClientError#HttpClientError",
           "effect/http/HttpClientRequest#bodyText",
+          "effect/http/HttpClientRequest#get",
           "effect/http/HttpClientRequest#post",
           "effect/observability/Otlp#layerFromConfig",
           "effect/observability/OtlpSerialization#layerJson",
           "effect/PlatformError#PlatformError",
+          "effect/process/ChildProcess#Command",
           "effect/process/ChildProcess#make",
           "effect/process/ChildProcessSpawner#ChildProcessSpawner",
           "effect/process/ChildProcessSpawner#ExitCode"

@@ -28,6 +28,10 @@ jobs:
         with:
           go-version: stable
           cache: false
+      - uses: open-telemetry/weaver/.github/actions/setup-weaver@51a5bf95bdbb2e20fb6e16638e6bbe7dde911e93 # v0.28.0
+        with:
+          version: 0.28.0
+          cache: "false"
       - if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}

@@ -22,7 +22,12 @@ const COMPRESSED_FLAG = 1;
 const FIRST_BYTE = 0;
 const ANY_FREE_PORT = 0;
 
-const GrpcStatus = { ok: "0", invalidArgument: "3", unimplemented: "12" } as const;
+const GrpcStatus = {
+  ok: "0",
+  invalidArgument: "3",
+  unimplemented: "12",
+  unavailable: "14",
+} as const;
 
 const frame = (message: Uint8Array): Uint8Array => {
   const framed = new Uint8Array(FRAME_HEADER_BYTES + message.length);
@@ -46,8 +51,9 @@ const reply =
   };
 
 const rejected =
-  (request: HttpServerRequest.HttpServerRequest) => (): HttpServerResponse.HttpServerResponse =>
-    reply(request)(GrpcStatus.invalidArgument, new Uint8Array());
+  (request: HttpServerRequest.HttpServerRequest, status: string) =>
+  (): HttpServerResponse.HttpServerResponse =>
+    reply(request)(status, new Uint8Array());
 
 const accepted =
   (request: HttpServerRequest.HttpServerRequest, endpoint: Endpoint) =>
@@ -65,7 +71,10 @@ const receive =
       Effect.flatMap(fromProtobuf(endpoint)),
       Effect.flatMap(store(endpoint)),
       Effect.map(accepted(request, endpoint)),
-      Effect.catchTag("MalformedExport", () => Effect.sync(rejected(request))),
+      Effect.catchTags({
+        MalformedExport: () => Effect.sync(rejected(request, GrpcStatus.invalidArgument)),
+        ForwardFailed: () => Effect.sync(rejected(request, GrpcStatus.unavailable)),
+      }),
     );
 
 const exportCall = (
@@ -95,4 +104,4 @@ const serveGrpc = (store: Store): Effect.Effect<string, never, Scope.Scope> =>
     Effect.map((server) => originOf(server.address)),
   );
 
-export { serveGrpc };
+export { GrpcStatus, frame, serveGrpc };

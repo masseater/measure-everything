@@ -99,6 +99,32 @@ Test telemetry therefore never leaks to an outside Collector.
 The receiver closes when the test file ends. With `isolate: false`, files may
 share one SDK. Then telemetry from the second file on is lost.
 
+## Semantic conventions
+
+`otlp({ semconv: true })` also checks every export against the OpenTelemetry
+semantic conventions. It starts the live-check of
+[OpenTelemetry Weaver](https://github.com/open-telemetry/weaver) once for the
+run. Each receiver forwards what it gets to Weaver before storing it. When the
+run ends, the plugin reads the report of Weaver. The run then fails and lists
+every finding at or above `failOn`.
+
+```ts
+otlp({
+  semconv: {
+    registry: "https://github.com/open-telemetry/semantic-conventions.git@v1.45.0[model]",
+    weaver: "weaver",
+    failOn: "violation",
+  },
+});
+```
+
+The values above are the defaults. `failOn` is `violation`, `improvement` or
+`information`. A custom attribute is a violation unless `registry` points to a
+registry that defines it. The `weaver` binary must be on `PATH`. In GitHub
+Actions, the
+[setup-weaver](https://github.com/open-telemetry/weaver/tree/main/.github/actions/setup-weaver)
+action installs it.
+
 ## License
 
 MIT

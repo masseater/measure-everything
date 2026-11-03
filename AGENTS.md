@@ -16,7 +16,7 @@
 - `libs/vitest-otlp` starts an OTLP receiver (HTTP and gRPC) per test file from `setupFiles`, points the `OTEL_*` variables at it, and decodes what arrives with the generated protobuf-es code and Effect Schemas.
 - `libs/web-vitals-flow` is a CLI that runs Lighthouse user flows several times and judges each step by the median. Its test measures a local page in Chrome and checks its spans with `vitest-otlp`.
 - `tools/claude-plugin` is the Claude Code plugin, listed by `.claude-plugin/marketplace.json`. Its `measure-everything` skill says which means to use in which situation; update it whenever a package or a recommended method changes.
-- CI durations are sent with otel-cicd-action from the last job of `verify.yml` when `vars.OTEL_EXPORTER_OTLP_ENDPOINT` is set.
+- The last job of `verify.yml` runs `.github/scripts/ci-telemetry.sh`. It sends job and step durations with a GitHub OIDC token to the ci-telemetry Worker of masseater/masseater.dev, which writes them to Workers Logs.
 
 ## Writing
 

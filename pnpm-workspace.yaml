@@ -8,7 +8,9 @@ packages:
 catalogMode: prefer
 
 catalog:
-  "@elastic/mockotlpserver": 0.12.0
+  "@bufbuild/buf": 1.75.0
+  "@bufbuild/protobuf": 2.16.0
+  "@bufbuild/protoc-gen-es": 2.16.0
   "@opentelemetry/api": 1.10.0
   "@opentelemetry/sdk-node": 0.300.0
   "@ast-grep/cli": 0.51.0
@@ -65,7 +67,7 @@ catalogs:
     steiger: 0.8.1
     tailwindcss: 4.3.3
     textlint: 15.8.0
-    typescript: 7.1.0-dev.20261030.1
+    typescript: 7.1.0-beta
     vite-plus: 1.4.0
 overrides:
   "@opentelemetry/api": "catalog:"
@@ -90,6 +92,7 @@ allowBuilds:
   core-js-pure: false
   dtrace-provider: false
   re2: true
+  "@bufbuild/buf": true
   "@openrouter/sdk": false
 packageExtensions:
   "@feature-sliced/steiger-plugin":
@@ -101,5 +104,3 @@ audit:
   ignorePrune: true
   ignore:
     - GHSA-gcqx-w48m-w2h4
-patchedDependencies:
-  "@elastic/mockotlpserver@0.12.0": patches/@elastic__mockotlpserver@0.12.0.patch

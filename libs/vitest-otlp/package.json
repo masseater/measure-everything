@@ -47,15 +47,18 @@
   },
   "scripts": {
     "build": "vp pack",
+    "generate": "buf generate",
     "test": "vp test run",
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "@elastic/mockotlpserver": "catalog:",
+    "@bufbuild/protobuf": "catalog:",
+    "@effect/platform-node": "catalog:",
     "effect": "catalog:stack"
   },
   "devDependencies": {
-    "@effect/platform-node": "catalog:",
+    "@bufbuild/buf": "catalog:",
+    "@bufbuild/protoc-gen-es": "catalog:",
     "@opentelemetry/api": "catalog:",
     "@opentelemetry/sdk-node": "catalog:",
     "@types/node": "catalog:",

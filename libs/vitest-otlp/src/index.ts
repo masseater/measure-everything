@@ -2,7 +2,7 @@ import { Array, Duration, Effect, Predicate, Schedule, Schema, pipe } from "effe
 import type { Plugin } from "vite-plus";
 
 import { decodeLogs, decodeMetrics, decodeSpans } from "./otlp-schema.ts";
-import type { SignalKey } from "./receiver.ts";
+import type { SignalKey } from "./requests.ts";
 import type { ReceiverNotRunning } from "./store.ts";
 import { currentReceiver } from "./store.ts";
 import type {

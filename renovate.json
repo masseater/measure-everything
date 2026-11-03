@@ -18,8 +18,8 @@
       "automerge": false
     },
     {
-      "matchDepNames": ["@tanstack/eslint-plugin-start>globals"],
-      "enabled": false
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "!/-dev\\./"
     }
   ],
   "customManagers": [

@@ -4,6 +4,7 @@
   "typeAware": { "enabled": true, "require": "complete" },
   "failOnParseError": true,
   "ignorePatterns": [".claude/**"],
+  "ignoreExports": [{ "file": "libs/vitest-otlp/src/generated/**", "exports": ["*"] }],
   "audit": { "gate": "all" },
   "security": {
     "categories": {
@@ -143,6 +144,12 @@
       "enablers": ["@tanstack/intent"],
       "configPatterns": [".intent/hooks/*.mjs"],
       "toolingDependencies": ["@tanstack/intent"],
+    },
+    {
+      "name": "buf",
+      "enablers": ["@bufbuild/buf"],
+      "configPatterns": ["**/buf.gen.yaml"],
+      "toolingDependencies": ["@bufbuild/buf", "@bufbuild/protoc-gen-es"],
     },
     {
       "name": "steiger",

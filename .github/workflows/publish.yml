@@ -29,6 +29,7 @@ jobs:
     env:
       PACKAGES: >-
         libs/vitest-otlp
+        libs/web-vitals-flow
     steps:
       - name: Resolve the ref to a commit
         id: resolve

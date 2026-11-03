@@ -103,46 +103,28 @@ export default defineConfig({
           allow: [
             { from: "lib", name: "Request" },
             { from: "lib", name: "Response" },
+            { from: "lib", name: "Uint8Array" },
             {
               from: "package",
-              package: "@cloudflare/workers-types",
-              name: "AnalyticsEngineDataset",
+              package: "@bufbuild/protobuf",
+              name: ["DescMessage", "JsonObject", "JsonValue", "Message"],
             },
-            { from: "package", package: "@tanstack/query-core", name: "QueryClient" },
-            {
-              from: "package",
-              package: "react",
-              name: ["ReactNode", "ButtonHTMLAttributes", "ClassAttributes"],
-            },
-            { from: "package", package: "clsx", name: "ClassValue" },
             { from: "package", package: "lighthouse", name: ["FlowResult", "Step"] },
             { from: "package", package: "puppeteer-core", name: ["Browser", "Page"] },
             {
               from: "package",
-              package: "typescript",
-              name: [
-                "CompilerHost",
-                "CompilerOptions",
-                "Node",
-                "ParsedCommandLine",
-                "Program",
-                "SourceFile",
-              ],
-            },
-            {
-              from: "package",
-              package: "@oxlint/plugins",
-              name: ["Context", "Node", "Rule", "RuleMeta"],
-            },
-            {
-              from: "package",
-              package: "oxlint",
-              name: ["InvalidTestCase", "Rule", "TestCases", "ValidTestCase"],
-            },
-            {
-              from: "package",
               package: "effect",
-              name: ["Cause", "Context", "Duration", "Effect", "Exit", "Layer", "Option"],
+              name: [
+                "Cause",
+                "Context",
+                "Duration",
+                "Effect",
+                "Exit",
+                "HttpServerRequest",
+                "HttpServerResponse",
+                "Layer",
+                "Option",
+              ],
             },
           ],
         },
@@ -156,7 +138,7 @@ export default defineConfig({
         "error",
         {
           capIsNewExceptions: ["App", "CloudflareApiLive", "Secret", "Stack"],
-          capIsNewExceptionPattern: String.raw`^(Config|Context|Data|Schema|AnalyticsEngine|ApiToken|D1|Logpush|R2|Ruleset|Rules|Website|Workers|Zone)\.`,
+          capIsNewExceptionPattern: String.raw`^(Argument|Config|Context|Data|Flag|Schema|AnalyticsEngine|ApiToken|D1|Logpush|R2|Ruleset|Rules|Website|Workers|Zone)\.`,
         },
       ],
       "typescript/no-empty-interface": ["error", { allowSingleExtends: true }],
@@ -206,6 +188,10 @@ export default defineConfig({
       {
         files: ["**/*.test.ts"],
         rules: turnedOff(decisionRules),
+      },
+      {
+        files: ["libs/vitest-otlp/src/grpc.ts"],
+        rules: { "import/no-nodejs-modules": ["error", { allow: ["node:http2"] }] },
       },
       {
         files: ["libs/vitest-otlp/src/setup.ts"],

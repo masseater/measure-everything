@@ -58,3 +58,16 @@ test("OTLP/gRPC reaches the receiver too", () =>
     });
     expect(yield* fromService("child-grpc")).toMatchObject([{ name: "child work" }]);
   }).pipe(services.runPromise));
+
+test("gzip-compressed exports are read over both transports", () =>
+  Effect.gen(function* gzip() {
+    const { grpcEndpoint } = yield* receiverAddress;
+    yield* runChild("gzip-http", { OTEL_EXPORTER_OTLP_COMPRESSION: "gzip" });
+    yield* runChild("gzip-grpc", {
+      OTEL_EXPORTER_OTLP_COMPRESSION: "gzip",
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc",
+      OTEL_EXPORTER_OTLP_ENDPOINT: grpcEndpoint,
+    });
+    expect(yield* fromService("gzip-http")).toMatchObject([{ name: "child work" }]);
+    expect(yield* fromService("gzip-grpc")).toMatchObject([{ name: "child work" }]);
+  }).pipe(services.runPromise));

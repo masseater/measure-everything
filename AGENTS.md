@@ -1,48 +1,58 @@
-## コマンド
+## Commands
 
-- コマンドは `vp` から実行し、`pnpm`・`npx` は直接使わない。`vp run <name>` は `package.json` と `vite.config.ts` のタスクで、組み込みコマンドとは別物である。
-- `vp run verify` が検査をまとめて流す。pre-push フックと Stop フックも同じ verify を走らせる。
-- `vp check` は oxlint-plugin-decision の判定に `.env` の `OPENROUTER_API_KEY` を使う。
-- テストを 1 つだけ走らせるときは、そのパッケージで `vp test run <ファイル>` を実行する。
-- 各パッケージの `vp run build` は `vp pack` で `dist/` を作る。
+- Run commands through `vp`; never call `pnpm` or `npx` directly. `vp run <name>` runs a task from `package.json` or `vite.config.ts`, which is not the same as a built-in command.
+- `vp run verify` runs every check. The pre-push and Stop hooks run the same verify.
+- `vp check` uses `OPENROUTER_API_KEY` from `.env` for oxlint-plugin-decision.
+- To run one test, run `vp test run <file>` in its package.
+- `vp run build` in each package builds `dist/` with `vp pack`.
+- `vp run generate` in `libs/vitest-otlp` regenerates the protobuf-es code in `src/generated` from opentelemetry-proto. Never edit the generated files.
 
-## 構成
+## Layout
 
-- 計測の部品を `libs/<部品名>` に 1 つずつ置き、npm の `@r_masseater/<部品名>` で出す。部品は既存の計測の仕組み（OpenTelemetry、各ツールの公式の拡張点）を差し込むだけにし、計測の仕組みそのものは作らない。
-- 使う側は Vite+ と Node.js 26 以降だけを前提にする。`vite-plus` は peer に置き、`vitest` 単体などほかの環境向けの書き換えや分岐を足さない。
-- `libs/vitest-otlp` は、`setupFiles` でテストファイルごとに `@elastic/mockotlpserver` を空きポートで立て、`OTEL_*` の環境変数をそこへ向ける。受け取った OTLP は `effect` の Schema で平らな形に直して溜める。
+- Each package lives in `libs/<name>` and is published to npm as `@r_masseater/<name>`.
+- Official features and auto-instrumentation of each service and tool come first. A package is added only for what they leave out, and it only plugs into OpenTelemetry or a tool's official extension point.
+- Packages assume Vite+ and Node.js 26 or later only. `vite-plus` is a peer dependency; do not add rewrites or branches for other environments such as plain `vitest`.
+- Do not reuse libraries that ship no type definitions; implement the part instead.
+- `libs/vitest-otlp` starts an OTLP receiver (HTTP and gRPC) per test file from `setupFiles`, points the `OTEL_*` variables at it, and decodes what arrives with the generated protobuf-es code and Effect Schemas.
+- `libs/web-vitals-flow` is a CLI that runs Lighthouse user flows several times and judges each step by the median. Its test measures a local page in Chrome and checks its spans with `vitest-otlp`.
+- `tools/claude-plugin` is the Claude Code plugin, listed by `.claude-plugin/marketplace.json`. Its `measure-everything` skill says which means to use in which situation; update it whenever a package or a recommended method changes.
+- CI durations are sent with otel-cicd-action from the last job of `verify.yml` when `vars.OTEL_EXPORTER_OTLP_ENDPOINT` is set.
 
-## 公開
+## Writing
 
-- main の verify が通ると release-please がタグを打ち、`publish.yml` が npm に出す。npm へは Trusted Publisher で出し、トークンを置かない。
+- Documents, the skill, README files, commit messages and PR descriptions are written in English.
 
-## ライブラリ
+## Publishing
 
-- ライブラリが型を提供する値は、その型のまま `Schema.decode*` に渡す。
-- ライブラリが export する型・スキーマ・enum・定数を書き写さない。
-- 外部 API のクライアントは手で包まず、Effect 公式のパッケージ、distilled.cloud（Cloudflare は `@distilled.cloud/cloudflare`）、公開 OpenAPI から `@effect/openapi-generator` で生成、の順に選ぶ。
+- When main's verify passes, release-please tags a release and `publish.yml` publishes to npm through a Trusted Publisher, with no token stored. All packages share one version.
 
-## PR とマージ
+## Libraries
 
-- PR のレビュー、PR ごとの CI・動作検証・デプロイはしない。動作は本番で確かめる。
-- マージ前に base を取り込み、手元の `vp run verify` を通してから自分でマージする。マージしてよいかは聞かない。ルールセットのバイパスや `--admin` は使わない。
-- release-please のリリース PR は `verify` を手動実行して作り直す。`up-to-date` が承認待ちで取り込むものも無ければ、ユーザーに承認を頼む。
+- Pass values whose types a library provides to `Schema.decode*` with those types.
+- Do not copy types, schemas, enums or constants that a library exports.
+- For external API clients, do not wrap them by hand. Choose, in order, an official Effect package, distilled.cloud (`@distilled.cloud/cloudflare` for Cloudflare), or a client generated from a public OpenAPI with `@effect/openapi-generator`.
+
+## Pull requests and merging
+
+- No PR reviews and no per-PR CI, verification or deployment. Behavior is checked in production.
+- Before merging, bring in the base branch and pass `vp run verify` locally, then merge yourself without asking. Never bypass rulesets or use `--admin`.
+- Recreate a release-please PR by running `verify` manually. If `up-to-date` waits for approval and there is nothing to bring in, ask the user to approve.
 
 ## oxlint-plugin-decision
 
-- 有料の decider は、無料の `openrouter/respan/span-01-lite` で判定できないルールだけに使う。判定できるかは、正解の分かる違反例と違反でない例を、キャッシュを消して `OXLINT_DECISION_EXPLAIN=json` で確かめる。
-- ルールが使うモデルは、ユーザーの指示なしに変えない。
-- 確信できるものだけを違反にする。閾値を下げて取りこぼしを拾いにいかない。
+- Use a paid decider only for rules the free `openrouter/respan/span-01-lite` cannot judge. Check that with violating and non-violating examples whose answers are known, with the cache cleared and `OXLINT_DECISION_EXPLAIN=json`.
+- Do not change the model a rule uses without the user's instruction.
+- Report only what is certain. Do not lower thresholds to catch misses.
 
-## 脆弱性
+## Vulnerabilities
 
-- `audit` は `vp pm audit --fix` で直す。修正版の無い勧告だけを `audit.ignore` に載せ、理由をコミットメッセージに書く。
+- Fix `audit` findings with `vp pm audit --fix`. Only advisories without a fixed version go into `audit.ignore`, with the reason in the commit message.
 
-## 公開先
+## Published endpoints
 
-- デプロイ先や外部公開しているもの（サイト、API、npm パッケージなど）があれば、その URL を README に一覧で載せる。
+- List every deployment and published artifact (sites, APIs, npm packages) with its URL in the README.
 
-## スキル
+## Skills
 
-- 編集の前に、リポジトリのルートで `vp exec intent list` を実行する。合う skill があれば `vp exec intent load <package>#<skill>` で読む。`intent` が無いときはインストールせず、不足を報告する。
-- 複数リポで使う自作スキルは masseater/skills に置き、skills CLI で入れる。
+- Before editing, run `vp exec intent list` at the repository root. If a skill fits, load it with `vp exec intent load <package>#<skill>`. If `intent` is missing, report it instead of installing it.
+- Personal skills shared across repositories live in masseater/skills and are installed with the skills CLI.

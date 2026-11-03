@@ -21,6 +21,11 @@
           "type": "json",
           "path": "libs/vitest-otlp/package.json",
           "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "libs/web-vitals-flow/package.json",
+          "jsonpath": "$.version"
         }
       ]
     }

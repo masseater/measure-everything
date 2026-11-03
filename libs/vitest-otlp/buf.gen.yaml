@@ -1,0 +1,16 @@
+version: v2
+inputs:
+  - git_repo: https://github.com/open-telemetry/opentelemetry-proto.git
+    tag: v1.11.1
+    paths:
+      - opentelemetry/proto/collector/trace/v1
+      - opentelemetry/proto/collector/metrics/v1
+      - opentelemetry/proto/collector/logs/v1
+plugins:
+  - local: protoc-gen-es
+    include_imports: true
+    out: src/generated
+    opt:
+      - target=ts
+      - import_extension=ts
+clean: true

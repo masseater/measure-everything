@@ -1,6 +1,6 @@
 {
-  "name": "typescript-template",
-  "version": "0.0.11",
+  "name": "measure-everything",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -17,7 +17,6 @@
     "@eslint-react/eslint-plugin": "catalog:",
     "@html-eslint/eslint-plugin-react": "catalog:",
     "@r_masseater/oxlint-plugin-decision": "catalog:",
-    "@r_masseater/oxlint-typed-rules": "catalog:",
     "@shadcn/lint": "catalog:",
     "@tanstack/eslint-plugin-query": "catalog:",
     "@tanstack/eslint-plugin-router": "catalog:",

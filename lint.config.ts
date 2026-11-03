@@ -18,6 +18,8 @@ const REACT_STATE_HOOKS: readonly string[] = [
 ];
 const HAND_WRITTEN_SQL = "SQL を手書きせず Drizzle のクエリビルダーを使う";
 const UI_STATE = "UI 状態は effect-atom だけで扱う";
+const INSTRUMENTATION = "計装は Effect のトレーシングだけで扱う";
+const OTLP_INTEROP_TESTS = "libs/vitest-otlp/src/**/*.test.ts";
 
 const requiredStack: Readonly<Record<string, readonly string[]>> = {
   [UI_STATE]: [
@@ -127,7 +129,7 @@ const requiredStack: Readonly<Record<string, readonly string[]>> = {
     "flagsmith",
     "@vercel/flags",
   ],
-  "計装は Effect のトレーシングだけで扱う": ["@opentelemetry/*", "dd-trace", "newrelic"],
+  [INSTRUMENTATION]: ["@opentelemetry/*", "dd-trace", "newrelic"],
   "インフラは Alchemy の IaC と Cloudflare だけで扱い、wrangler は使わない": [
     "wrangler",
     "miniflare",
@@ -182,6 +184,17 @@ const restrictedImports = {
   patterns: [...requiredStackPatterns],
 };
 
+const restrictedImportsExcept = (message: string): typeof restrictedImports => ({
+  paths: pipe(
+    restrictedImports.paths,
+    Array.filter((path) => path.message !== message),
+  ),
+  patterns: pipe(
+    restrictedImports.patterns,
+    Array.filter((pattern) => pattern.message !== message),
+  ),
+});
+
 const generated = [
   "**/routeTree.gen.ts",
   "**/generated/**",
@@ -216,13 +229,6 @@ const prefixed = (
       Array.map((rule) => `${prefix}/${rule}`),
     ),
   );
-
-const pluginRules = (
-  plugin: Readonly<{
-    meta: Readonly<{ name: string }>;
-    rules: Record.ReadonlyRecord<string, unknown>;
-  }>,
-): Rules => prefixed(plugin.meta.name, plugin);
 
 const turnedOff = (rules: Rules): Record.ReadonlyRecord<string, "off"> =>
   pipe(
@@ -267,6 +273,8 @@ const effectRules = asErrors(effectRuleNames);
 
 export type { Rules };
 export {
+  INSTRUMENTATION,
+  OTLP_INTEROP_TESTS,
   baselineJsRules,
   decisionPluginName,
   decisionRules,
@@ -274,10 +282,10 @@ export {
   eslintReactRules,
   generated,
   htmlReactRules,
-  pluginRules,
   reactHooksRules,
   requiredStack,
   restrictedImports,
+  restrictedImportsExcept,
   shadcnRules,
   tanstackQueryRules,
   tanstackRouterRules,

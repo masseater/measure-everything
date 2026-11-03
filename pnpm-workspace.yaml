@@ -8,6 +8,9 @@ packages:
 catalogMode: prefer
 
 catalog:
+  "@elastic/mockotlpserver": 0.12.0
+  "@opentelemetry/api": 1.10.0
+  "@opentelemetry/sdk-node": 0.300.0
   "@ast-grep/cli": 0.51.0
   "@cloudflare/workers-types": 5.20261101.1
   "@effect/platform-node": 4.0.7
@@ -15,7 +18,6 @@ catalog:
   "@shadcn/lint": 0.2.3
   "@tanstack/eslint-plugin-query": 5.105.1
   "@tanstack/eslint-plugin-router": 1.162.0
-  "@r_masseater/oxlint-typed-rules": 0.0.1
   "@types/node": 26.6.6
   eslint-plugin-drizzle: 0.2.3
   eslint-plugin-react-hooks: 7.1.1
@@ -66,10 +68,10 @@ catalogs:
     typescript: 7.1.0-beta
     vite-plus: 1.4.0
 overrides:
+  "@opentelemetry/api": "catalog:"
   effect: "catalog:stack"
   "@effect/platform-node-shared": 4.0.7
   "@effect/sql-d1": 4.0.7
-  "@effect/sql-sqlite-do": 4.0.7
   "@effect/vitest": 4.0.7
   vite@*: "catalog:"
   eslint-plugin-react-hooks>zod-validation-error: ^5.0.0
@@ -77,7 +79,6 @@ overrides:
   katex@>=0.11.0 <0.18.2: ^0.19.0
   minimatch@<11.0.1: ^11.0.1
   re2js@>=2.2.0 <2.8.7: ^2.8.7
-  seroval@<1.6.11: ^1.6.11
 peerDependencyRules:
   allowAny:
     - vite
@@ -96,8 +97,9 @@ packageExtensions:
       "@steiger/toolkit": 0.2.3
 minimumReleaseAgeExclude:
   - "@r_masseater/oxlint-plugin-decision@0.0.4"
-  - "@r_masseater/oxlint-typed-rules@0.0.1"
 audit:
   ignorePrune: true
   ignore:
     - GHSA-gcqx-w48m-w2h4
+patchedDependencies:
+  "@elastic/mockotlpserver@0.12.0": patches/@elastic__mockotlpserver@0.12.0.patch

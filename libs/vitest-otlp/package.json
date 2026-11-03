@@ -1,0 +1,70 @@
+{
+  "name": "@r_masseater/vitest-otlp",
+  "version": "0.0.0",
+  "description": "A Vitest plugin that receives OTLP traces, metrics and logs during tests so tests can assert on the telemetry the code under test actually exported.",
+  "keywords": [
+    "opentelemetry",
+    "otel",
+    "otlp",
+    "testing",
+    "vitest",
+    "vitest-plugin"
+  ],
+  "homepage": "https://github.com/masseater/measure-everything/tree/main/libs/vitest-otlp#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/measure-everything/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/measure-everything.git",
+    "directory": "libs/vitest-otlp"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./setup": "./src/setup.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "./setup": {
+        "types": "./dist/setup.d.mts",
+        "default": "./dist/setup.mjs"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "vp pack",
+    "test": "vp test run",
+    "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "@elastic/mockotlpserver": "catalog:",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@effect/platform-node": "catalog:",
+    "@opentelemetry/api": "catalog:",
+    "@opentelemetry/sdk-node": "catalog:",
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "vite-plus": "catalog:stack"
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}

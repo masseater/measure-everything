@@ -1,0 +1,60 @@
+{
+  "name": "@r_masseater/web-vitals-flow",
+  "version": "0.0.0",
+  "description": "Measure Core Web Vitals of page loads and same-origin link transitions with Lighthouse user flows, take the median of several runs, and fail when LCP, INP or CLS misses Lighthouse's passing score.",
+  "keywords": [
+    "cls",
+    "core-web-vitals",
+    "inp",
+    "lcp",
+    "lighthouse",
+    "opentelemetry",
+    "user-flow",
+    "web-vitals"
+  ],
+  "homepage": "https://github.com/masseater/measure-everything/tree/main/libs/web-vitals-flow#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/measure-everything/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/measure-everything.git",
+    "directory": "libs/web-vitals-flow"
+  },
+  "bin": {
+    "web-vitals-flow": "./src/main.ts"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "type": "module",
+  "publishConfig": {
+    "bin": {
+      "web-vitals-flow": "./dist/main.mjs"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "vp pack",
+    "test": "vp test run",
+    "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "chrome-launcher": "catalog:",
+    "effect": "catalog:stack",
+    "lighthouse": "catalog:",
+    "puppeteer-core": "catalog:"
+  },
+  "devDependencies": {
+    "@r_masseater/vitest-otlp": "workspace:*",
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}

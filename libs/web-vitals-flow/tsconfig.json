@@ -1,0 +1,40 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src", "vite.config.ts"],
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/platform-node/NodeHttpServer#layerTest",
+          "@effect/platform-node/NodeRuntime#runMain",
+          "@effect/platform-node/NodeServices#layer",
+          "effect/FileSystem#FileSystem",
+          "effect/Path#Path",
+          "effect/PlatformError#PlatformError",
+          "effect/cli/Argument#String",
+          "effect/cli/Argument#atLeast",
+          "effect/cli/Argument#withDescription",
+          "effect/cli/Command#make",
+          "effect/cli/Command#run",
+          "effect/cli/Flag#Int",
+          "effect/cli/Flag#String",
+          "effect/cli/Flag#withDefault",
+          "effect/cli/Flag#withDescription",
+          "effect/http/FetchHttpClient#layer",
+          "effect/http/HttpServer#HttpServer",
+          "effect/http/HttpServer#formatAddress",
+          "effect/http/HttpServerRequest#HttpServerRequest",
+          "effect/http/HttpServerResponse#empty",
+          "effect/http/HttpServerResponse#html",
+          "effect/observability/OtlpSerialization#layerJson",
+          "effect/observability/OtlpTracer#layerFromConfig",
+          "effect/process/ChildProcess#make",
+          "effect/process/ChildProcessSpawner#ChildProcessSpawner",
+          "effect/process/ChildProcessSpawner#ExitCode"
+        ]
+      }
+    ]
+  }
+}

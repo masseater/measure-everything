@@ -1,0 +1,13 @@
+{
+  "name": "measure-everything",
+  "description": "A skill that tells the agent which official feature, auto-instrumentation or measure-everything package to use for each measurement",
+  "version": "0.0.0",
+  "author": {
+    "name": "masseater",
+    "url": "https://github.com/masseater"
+  },
+  "homepage": "https://github.com/masseater/measure-everything",
+  "repository": "https://github.com/masseater/measure-everything",
+  "license": "MIT",
+  "skills": "./skills/"
+}

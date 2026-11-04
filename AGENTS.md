@@ -36,7 +36,7 @@
 
 - No PR reviews and no per-PR CI, verification or deployment. Behavior is checked in production.
 - Before merging, bring in the base branch and pass `vp run verify` locally, then merge yourself without asking. Never bypass rulesets or use `--admin`.
-- Recreate a release-please PR by running `verify` manually. If `up-to-date` waits for approval and there is nothing to bring in, ask the user to approve.
+- Recreate a release-please PR by running `verify` manually. `up-to-date` on a PR opened by github-actions[bot] waits for approval (action_required); re-run that run yourself instead of asking the user.
 
 ## oxlint-plugin-decision
 

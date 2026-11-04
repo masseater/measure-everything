@@ -40,7 +40,7 @@
   "scripts": {
     "build": "vp pack",
     "test": "vp test run",
-    "prepublishOnly": "vp run build"
+    "prepack": "vp run build"
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",

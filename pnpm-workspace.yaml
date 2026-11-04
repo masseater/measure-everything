@@ -15,7 +15,7 @@ catalog:
   "@opentelemetry/sdk-node": 0.300.0
   "@ast-grep/cli": 0.51.0
   "@cloudflare/workers-types": 5.20261101.1
-  "@effect/platform-node": 4.0.7
+  "@effect/platform-node": 4.1.1
   "@eslint-react/eslint-plugin": 5.28.8
   "@shadcn/lint": 0.2.3
   "@tanstack/eslint-plugin-query": 5.105.1
@@ -47,7 +47,7 @@ catalog:
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.17
-    "@effect/atom-react": 4.0.7
+    "@effect/atom-react": 4.1.1
     "@effect/tsgo": 0.63.0
     "@elysiajs/eden": 1.4.9
     "@openfeature/server-sdk": 1.23.0
@@ -60,7 +60,7 @@ catalogs:
     drizzle-kit: 1.0.0-rc.5-ab785fc
     drizzle-orm: 1.0.0-rc.5-ab785fc
     eden-tanstack-react-query: 0.5.1
-    effect: 4.0.7
+    effect: 4.1.1
     elysia: 1.4.30
     fallow: 3.38.1
     radix-ui: 1.8.1
@@ -73,9 +73,9 @@ catalogs:
 overrides:
   "@opentelemetry/api": "catalog:"
   effect: "catalog:stack"
-  "@effect/platform-node-shared": 4.0.7
-  "@effect/sql-d1": 4.0.7
-  "@effect/vitest": 4.0.7
+  "@effect/platform-node-shared": 4.1.1
+  "@effect/sql-d1": 4.1.1
+  "@effect/vitest": 4.1.1
   vite@*: "catalog:"
   eslint-plugin-react-hooks>zod-validation-error: ^5.0.0
   glob@>=9.0.0 <=14.0.1: ^14.0.2

@@ -19,13 +19,18 @@ const config: RcFile = {
     {
       label: "Workers のスパンは Miniflare で Worker を動かしてテストする",
       dependencies: ["miniflare"],
-      packages: ["@r_masseater/vitest-otlp"],
+      packages: ["@r_masseater/vitest-otlp", "@r_masseater/workers-tracing"],
       dependencyTypes: ["dev"],
     },
     {
       label: "Workers のスパンのテストが使う Miniflare の版",
       dependencies: ["miniflare"],
       packages: ["pnpm-workspace.yaml"],
+    },
+    {
+      label: "公開するパッケージの peer は使う側の版を幅で受ける",
+      dependencyTypes: ["peer"],
+      isIgnored: true,
     },
     ...pipe(
       Record.toEntries(requiredStack),

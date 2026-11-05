@@ -18,6 +18,7 @@ import {
   tanstackRouterRules,
   turnedOff,
 } from "./lint.config.ts";
+import { readonlyParameterTypes } from "./readonly.config.ts";
 
 export default defineConfig({
   staged: {
@@ -95,54 +96,7 @@ export default defineConfig({
       "node/no-top-level-await": "off",
       "eslint/one-var": ["error", "never"],
       "eslint/no-restricted-imports": ["error", restrictedImports],
-      "typescript/prefer-readonly-parameter-types": [
-        "error",
-        {
-          ignoreInferredTypes: true,
-          allow: [
-            { from: "lib", name: "Request" },
-            { from: "lib", name: "Response" },
-            { from: "lib", name: "Uint8Array" },
-            { from: "lib", name: "Date" },
-            {
-              from: "package",
-              package: "@bufbuild/protobuf",
-              name: ["DescMessage", "JsonObject", "JsonValue", "Message"],
-            },
-            { from: "package", package: "lighthouse", name: ["FlowResult", "Step"] },
-            { from: "package", package: "vitest", name: "TestProject" },
-            {
-              from: "package",
-              package: "@cloudflare/workers-types",
-              name: [
-                "TailEvent",
-                "Onset",
-                "Log",
-                "Exception",
-                "Attribute",
-                "SpanUpdateInfo",
-                "FetchResponseInfo",
-              ],
-            },
-            { from: "package", package: "puppeteer-core", name: ["Browser", "Page"] },
-            {
-              from: "package",
-              package: "effect",
-              name: [
-                "Cause",
-                "Context",
-                "Duration",
-                "Effect",
-                "Exit",
-                "HttpServerRequest",
-                "HttpServerResponse",
-                "Layer",
-                "Option",
-              ],
-            },
-          ],
-        },
-      ],
+      "typescript/prefer-readonly-parameter-types": ["error", readonlyParameterTypes],
       "eslint/no-duplicate-imports": ["error", { allowSeparateTypeImports: true }],
       "react/function-component-definition": [
         "error",
@@ -212,6 +166,14 @@ export default defineConfig({
         rules: { "import/no-nodejs-modules": ["error", { allow: ["node:http2", "node:url"] }] },
       },
       {
+        files: ["libs/workers-tracing/src/context.ts"],
+        rules: { "import/no-nodejs-modules": ["error", { allow: ["node:async_hooks"] }] },
+      },
+      {
+        files: ["libs/workers-tracing/src/**/*.test.ts"],
+        rules: { "import/no-nodejs-modules": ["error", { allow: ["node:url"] }] },
+      },
+      {
         files: ["libs/vitest-otlp/src/setup.ts"],
         rules: {
           "node/no-process-env": "off",
@@ -219,7 +181,7 @@ export default defineConfig({
         },
       },
       {
-        files: [OTLP_INTEROP_TESTS],
+        files: OTLP_INTEROP_TESTS,
         rules: {
           "eslint/no-restricted-imports": ["error", OTLP_INTEROP_IMPORTS],
         },

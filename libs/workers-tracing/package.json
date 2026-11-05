@@ -1,0 +1,88 @@
+{
+  "name": "@r_masseater/workers-tracing",
+  "version": "0.0.3",
+  "description": "Put Effect spans, TanStack Start requests and server functions, and Elysia routes into the automatic traces of Cloudflare Workers, nested with the platform's own D1, KV and fetch spans.",
+  "keywords": [
+    "cloudflare-workers",
+    "effect",
+    "elysia",
+    "observability",
+    "opentelemetry",
+    "tanstack-start",
+    "tracing"
+  ],
+  "homepage": "https://github.com/masseater/measure-everything/tree/main/libs/workers-tracing#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/measure-everything/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/measure-everything.git",
+    "directory": "libs/workers-tracing"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "type": "module",
+  "exports": {
+    "./effect": "./src/effect.ts",
+    "./elysia": "./src/elysia.ts",
+    "./tanstack-start": "./src/tanstack-start.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      "./effect": {
+        "types": "./dist/effect.d.mts",
+        "default": "./dist/effect.mjs"
+      },
+      "./elysia": {
+        "types": "./dist/elysia.d.mts",
+        "default": "./dist/elysia.mjs"
+      },
+      "./tanstack-start": {
+        "types": "./dist/tanstack-start.d.mts",
+        "default": "./dist/tanstack-start.mjs"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "vp pack",
+    "test": "vp test run",
+    "prepack": "vp run build"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@r_masseater/vitest-otlp": "workspace:*",
+    "@tanstack/react-start": "catalog:stack",
+    "@types/node": "catalog:",
+    "effect": "catalog:stack",
+    "elysia": "catalog:stack",
+    "miniflare": "catalog:",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "@tanstack/react-start": "^1.169.4",
+    "effect": "^4.1.2",
+    "elysia": "^1.4.30"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/react-start": {
+      "optional": true
+    },
+    "effect": {
+      "optional": true
+    },
+    "elysia": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}

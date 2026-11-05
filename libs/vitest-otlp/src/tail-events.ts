@@ -54,9 +54,12 @@ const SPAN_STATUSES: Readonly<Record<TailStream.SpanStatusCode, Status_StatusCod
 
 const nanos = (date: Date): bigint => BigInt(date.getTime()) * NANOS_PER_MILLI;
 
-const statusOf = (outcome: TailStream.EventOutcome): Status_StatusCode =>
+const statusOf = (
+  outcome: TailStream.EventOutcome,
+  current: Status_StatusCode,
+): Status_StatusCode =>
   Match.value(outcome).pipe(
-    Match.when("ok", () => Status_StatusCode.UNSET),
+    Match.when("ok", () => current),
     Match.orElse(() => Status_StatusCode.ERROR),
   );
 
@@ -131,7 +134,11 @@ const withAttributes =
 
 const closed =
   (end: bigint, outcome: TailStream.EventOutcome) =>
-  (draft: Draft): Draft => ({ ...draft, end: Option.some(end), status: statusOf(outcome) });
+  (draft: Draft): Draft => ({
+    ...draft,
+    end: Option.some(end),
+    status: statusOf(outcome, draft.status),
+  });
 
 const updated =
   (info: TailStream.SpanUpdateInfo) =>

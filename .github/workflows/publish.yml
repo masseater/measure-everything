@@ -30,6 +30,7 @@ jobs:
       PACKAGES: >-
         libs/vitest-otlp
         libs/web-vitals-flow
+        libs/workers-tracing
     steps:
       - name: Resolve the ref to a commit
         id: resolve

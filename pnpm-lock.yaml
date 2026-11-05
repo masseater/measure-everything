@@ -180,8 +180,8 @@ catalogs:
       specifier: 2.16.0
       version: 2.16.0
     '@cloudflare/workers-types':
-      specifier: 5.20261101.1
-      version: 5.20261101.1
+      specifier: 5.20261102.1
+      version: 5.20261102.1
     '@commitlint/cli':
       specifier: 21.2.4
       version: 21.2.4
@@ -447,7 +447,7 @@ importers:
         version: 2.16.0(@bufbuild/protobuf@2.16.0)(supports-color@7.2.0)
       '@cloudflare/workers-types':
         specifier: 'catalog:'
-        version: 5.20261101.1
+        version: 5.20261102.1
       '@opentelemetry/api':
         specifier: 1.10.0
         version: 1.10.0
@@ -499,7 +499,7 @@ importers:
         version: 0.18.5
       '@cloudflare/workers-types':
         specifier: 'catalog:'
-        version: 5.20261101.1
+        version: 5.20261102.1
       '@r_masseater/vitest-otlp':
         specifier: workspace:*
         version: link:../vitest-otlp
@@ -996,8 +996,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@cloudflare/workers-types@5.20261101.1':
-    resolution: {integrity: sha512-malJEW9V9x+MygAc9RDGiWF0I8HFYfMzY5CXMn3tbzCxUiQBHtHWUTG5aFmO9oaFenc2z5OyT7e+a46ZaGs3cQ==}
+  '@cloudflare/workers-types@5.20261102.1':
+    resolution: {integrity: sha512-rRNznLGla+8vRdToTN/5M+AzlopILSLLZ3qo2L5Ku/dY792iOlX/K9ZLkLnLYji1jycv7+FB12hiE+fFjVgMrw==}
 
   '@commitlint/cli@21.2.4':
     resolution: {integrity: sha512-g3M/wrQdElqGH5vROIeL2QiYIxrzqUkhCgsDyDlWfKEyQdCt10OyMB28W2cJtpZ+VNGMvmaN923infr1hOfyrg==}
@@ -8511,7 +8511,7 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20261104.1':
     optional: true
 
-  '@cloudflare/workers-types@5.20261101.1': {}
+  '@cloudflare/workers-types@5.20261102.1': {}
 
   '@commitlint/cli@21.2.4(conventional-commits-parser@7.1.2)(typescript@5.6.1-rc)':
     dependencies:
@@ -8693,7 +8693,7 @@ snapshots:
 
   '@effect/sql-d1@4.1.2(effect@4.1.2)':
     dependencies:
-      '@cloudflare/workers-types': 5.20261101.1
+      '@cloudflare/workers-types': 5.20261102.1
       effect: 4.1.2
 
   '@effect/tsgo-darwin-arm64@0.63.0':

@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.4](https://github.com/masseater/measure-everything/compare/v0.0.3...v0.0.4) (2026-11-05)
+
+
+### Features
+
+* **workers-tracing:** add auto spans for Effect, TanStack Start and Elysia on Workers ([#44](https://github.com/masseater/measure-everything/issues/44)) ([d4d24d5](https://github.com/masseater/measure-everything/commit/d4d24d5de10e8dcb0b4d6c7e277d36d4d5f02b35))
+
+
+### Bug Fixes
+
+* **deps:** effect 4.1.2・alchemy 2.0.0-beta.85・lint-kit 0.1.0 に上げる ([#36](https://github.com/masseater/measure-everything/issues/36)) ([3f7df45](https://github.com/masseater/measure-everything/commit/3f7df45b2db5153e4c1e9ba805371dfe510df117))
+
 ## [0.0.3](https://github.com/masseater/measure-everything/compare/v0.0.2...v0.0.3) (2026-11-04)
 
 

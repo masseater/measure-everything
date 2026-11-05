@@ -35,16 +35,16 @@
   "publishConfig": {
     "exports": {
       "./effect": {
-        "types": "./dist/effect.d.mts",
-        "default": "./dist/effect.mjs"
+        "types": "./dist/effect.d.ts",
+        "default": "./dist/effect.js"
       },
       "./elysia": {
-        "types": "./dist/elysia.d.mts",
-        "default": "./dist/elysia.mjs"
+        "types": "./dist/elysia.d.ts",
+        "default": "./dist/elysia.js"
       },
       "./tanstack-start": {
-        "types": "./dist/tanstack-start.d.mts",
-        "default": "./dist/tanstack-start.mjs"
+        "types": "./dist/tanstack-start.d.ts",
+        "default": "./dist/tanstack-start.js"
       },
       "./package.json": "./package.json"
     },
@@ -57,6 +57,7 @@
     "prepack": "vp run build"
   },
   "devDependencies": {
+    "@arethetypeswrong/core": "catalog:",
     "@cloudflare/workers-types": "catalog:",
     "@r_masseater/vitest-otlp": "workspace:*",
     "@tanstack/react-start": "catalog:stack",
@@ -64,6 +65,7 @@
     "effect": "catalog:stack",
     "elysia": "catalog:stack",
     "miniflare": "catalog:",
+    "publint": "catalog:",
     "vite-plus": "catalog:stack"
   },
   "peerDependencies": {

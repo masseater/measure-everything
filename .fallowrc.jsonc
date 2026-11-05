@@ -3,6 +3,7 @@
   "production": true,
   "typeAware": { "enabled": true, "require": "complete" },
   "failOnParseError": true,
+  "ignoreDependencies": ["publint", "@arethetypeswrong/core"],
   "ignorePatterns": [".claude/**"],
   "dynamicallyLoaded": ["libs/workers-tracing/src/fixture/*.worker.ts"],
   "ignoreExports": [{ "file": "libs/vitest-otlp/src/generated/**", "exports": ["*"] }],

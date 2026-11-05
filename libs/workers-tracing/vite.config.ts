@@ -7,6 +7,8 @@ export default defineConfig({
     entry: ["src/effect.ts", "src/elysia.ts", "src/tanstack-start.ts"],
     platform: "neutral",
     sourcemap: true,
+    publint: { strict: true },
+    attw: { profile: "esm-only", level: "error" },
     dts: true,
     external: [/^cloudflare:/u, /^node:/u],
   },

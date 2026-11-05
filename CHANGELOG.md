@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.6](https://github.com/masseater/measure-everything/compare/v0.0.5...v0.0.6) (2026-11-05)
+
+
+### Bug Fixes
+
+* **workers-tracing:** give the browser a no-op tanstack-start entry ([#53](https://github.com/masseater/measure-everything/issues/53)) ([85c1f4d](https://github.com/masseater/measure-everything/commit/85c1f4d17190715bfb85e0eb3342652328c731fe))
+
 ## [0.0.5](https://github.com/masseater/measure-everything/compare/v0.0.4...v0.0.5) (2026-11-05)
 
 

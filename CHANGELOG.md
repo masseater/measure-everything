@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.5](https://github.com/masseater/measure-everything/compare/v0.0.4...v0.0.5) (2026-11-05)
+
+
+### Bug Fixes
+
+* **workers-tracing:** point exports at the files the build emits ([#51](https://github.com/masseater/measure-everything/issues/51)) ([2bcd490](https://github.com/masseater/measure-everything/commit/2bcd490d39477a9d6c63a4ac00f7c3fa0d455353))
+
 ## [0.0.4](https://github.com/masseater/measure-everything/compare/v0.0.3...v0.0.4) (2026-11-05)
 
 

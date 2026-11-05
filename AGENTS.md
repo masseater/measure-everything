@@ -1,9 +1,7 @@
+Before starting work, read and follow the `repo-conventions` and `vite-plus` skills. Both live in masseater/skills, and `vp install` puts them in `.agents/skills/`.
+
 ## Commands
 
-- Run commands through `vp`; never call `pnpm` or `npx` directly. `vp run <name>` runs a task from `package.json` or `vite.config.ts`, which is not the same as a built-in command.
-- `vp run verify` runs every check. The pre-push and Stop hooks run the same verify.
-- `vp check` uses `OPENROUTER_API_KEY` from `.env` for oxlint-plugin-decision.
-- To run one test, run `vp test run <file>` in its package.
 - `vp run build` in each package builds `dist/` with `vp pack`.
 - `vp run generate` in `libs/vitest-otlp` regenerates the protobuf-es code in `src/generated` from opentelemetry-proto. Never edit the generated files.
 
@@ -25,34 +23,3 @@
 ## Publishing
 
 - When main's verify passes, release-please tags a release and `publish.yml` publishes to npm through a Trusted Publisher, with no token stored. All packages share one version.
-
-## Libraries
-
-- Pass values whose types a library provides to `Schema.decode*` with those types.
-- Do not copy types, schemas, enums or constants that a library exports.
-- For external API clients, do not wrap them by hand. Choose, in order, an official Effect package, distilled.cloud (`@distilled.cloud/cloudflare` for Cloudflare), or a client generated from a public OpenAPI with `@effect/openapi-generator`.
-
-## Pull requests and merging
-
-- No PR reviews and no per-PR CI, verification or deployment. Behavior is checked in production.
-- Before merging, bring in the base branch and pass `vp run verify` locally, then merge yourself without asking. Never bypass rulesets or use `--admin`.
-- Recreate a release-please PR by running `verify` manually. `up-to-date` on a PR opened by github-actions[bot] waits for approval (action_required); re-run that run yourself instead of asking the user.
-
-## oxlint-plugin-decision
-
-- Use a paid decider only for rules the free `openrouter/respan/span-01-lite` cannot judge. Check that with violating and non-violating examples whose answers are known, with the cache cleared and `OXLINT_DECISION_EXPLAIN=json`.
-- Do not change the model a rule uses without the user's instruction.
-- Report only what is certain. Do not lower thresholds to catch misses.
-
-## Vulnerabilities
-
-- Fix `audit` findings with `vp pm audit --fix`. Only advisories without a fixed version go into `audit.ignore`, with the reason in the commit message.
-
-## Published endpoints
-
-- List every deployment and published artifact (sites, APIs, npm packages) with its URL in the README.
-
-## Skills
-
-- Before editing, run `vp exec intent list` at the repository root. If a skill fits, load it with `vp exec intent load <package>#<skill>`. If `intent` is missing, report it instead of installing it.
-- Personal skills shared across repositories live in masseater/skills and are installed with the skills CLI.

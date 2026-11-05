@@ -17,7 +17,7 @@ const bundle = Effect.promise(() =>
     configFile: false,
     logLevel: "silent",
     resolve: { conditions: WORKER_CONDITIONS },
-    ssr: { noExternal: true, target: "webworker" },
+    ssr: { noExternal: true, target: "webworker", resolve: { conditions: WORKER_CONDITIONS } },
     build: {
       write: false,
       minify: false,

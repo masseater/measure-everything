@@ -20,6 +20,7 @@ The stack is [Vite+](https://viteplus.dev/), which means Node.js. Only Node.js
 
 - npm: [@r_masseater/vitest-otlp](https://www.npmjs.com/package/@r_masseater/vitest-otlp)
 - npm: [@r_masseater/web-vitals-flow](https://www.npmjs.com/package/@r_masseater/web-vitals-flow)
+- npm: [@r_masseater/workers-tracing](https://www.npmjs.com/package/@r_masseater/workers-tracing)
 - Claude Code plugin marketplace: `masseater/measure-everything`
 
 ## Packages
@@ -30,6 +31,10 @@ test can then assert the spans, metrics and logs that the code really exported.
 [@r_masseater/web-vitals-flow](libs/web-vitals-flow) runs Lighthouse user flows.
 It measures Web Vitals of page loads and of same-origin link transitions. Each
 step is judged by the median of 5 runs.
+
+[@r_masseater/workers-tracing](libs/workers-tracing) adds spans to the
+automatic traces of Cloudflare Workers. It covers Effect spans, TanStack Start
+requests and server functions, and Elysia routes.
 
 CI durations need no package. The skill describes how to send them with the
 existing [otel-cicd-action](https://github.com/corentinmusard/otel-cicd-action).

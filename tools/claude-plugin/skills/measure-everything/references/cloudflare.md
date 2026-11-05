@@ -7,6 +7,12 @@ with `observability.traces.enabled`. Cloudflare then makes spans for outbound
 fetches and for calls to KV, R2, D1, Durable Objects and other Workers. No SDK
 is needed.
 
+For an app on Effect, TanStack Start and Elysia, add
+[`@r_masseater/workers-tracing`](https://github.com/masseater/measure-everything/tree/main/libs/workers-tracing).
+Effect spans, requests, server functions and Elysia routes then join the
+platform's own spans in one trace. Do not build an Effect tracer
+or a span middleware per repository.
+
 Send traces and logs to an OTLP backend through
 [export
 destinations](https://developers.cloudflare.com/workers/observability/exporting-opentelemetry-data).

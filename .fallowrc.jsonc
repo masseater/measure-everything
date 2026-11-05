@@ -4,6 +4,7 @@
   "typeAware": { "enabled": true, "require": "complete" },
   "failOnParseError": true,
   "ignorePatterns": [".claude/**"],
+  "dynamicallyLoaded": ["libs/workers-tracing/src/fixture/*.worker.ts"],
   "ignoreExports": [{ "file": "libs/vitest-otlp/src/generated/**", "exports": ["*"] }],
   "overrides": [
     { "files": ["libs/vitest-otlp/src/generated/**"], "rules": { "unused-enum-members": "off" } },

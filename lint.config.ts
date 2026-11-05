@@ -20,7 +20,10 @@ const HAND_WRITTEN_SQL = "SQL を手書きせず Drizzle のクエリビルダ�
 const UI_STATE = "UI 状態は effect-atom だけで扱う";
 const INSTRUMENTATION = "計装は Effect のトレーシングだけで扱う";
 const INFRASTRUCTURE = "インフラは Alchemy の IaC と Cloudflare だけで扱い、wrangler は使わない";
-const OTLP_INTEROP_TESTS = "libs/vitest-otlp/src/**/*.test.ts";
+const OTLP_INTEROP_TESTS = [
+  "libs/vitest-otlp/src/**/*.test.ts",
+  "libs/workers-tracing/src/**/*.test.ts",
+];
 
 const requiredStack: Readonly<Record<string, readonly string[]>> = {
   [UI_STATE]: [

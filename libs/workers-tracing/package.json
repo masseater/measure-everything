@@ -29,7 +29,11 @@
   "exports": {
     "./effect": "./src/effect.ts",
     "./elysia": "./src/elysia.ts",
-    "./tanstack-start": "./src/tanstack-start.ts",
+    "./tanstack-start": {
+      "workerd": "./src/tanstack-start.ts",
+      "browser": "./src/tanstack-start.browser.ts",
+      "default": "./src/tanstack-start.ts"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -44,6 +48,8 @@
       },
       "./tanstack-start": {
         "types": "./dist/tanstack-start.d.ts",
+        "workerd": "./dist/tanstack-start.js",
+        "browser": "./dist/tanstack-start.browser.js",
         "default": "./dist/tanstack-start.js"
       },
       "./package.json": "./package.json"

@@ -4,7 +4,12 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   plugins: [otlp()],
   pack: {
-    entry: ["src/effect.ts", "src/elysia.ts", "src/tanstack-start.ts"],
+    entry: [
+      "src/effect.ts",
+      "src/elysia.ts",
+      "src/tanstack-start.ts",
+      "src/tanstack-start.browser.ts",
+    ],
     platform: "neutral",
     sourcemap: true,
     publint: { strict: true },

@@ -58,6 +58,21 @@ const api = traced.get("/items/:id", item);
 const handle = tracedHandle(api.handle);
 ```
 
+## Cost
+
+Measured in Miniflare (workerd 1.20261104.1) on 2026-11-05, as the median of
+500 requests, with and without `layer`.
+
+| Request              | Without    | With         | Added             |
+| -------------------- | ---------- | ------------ | ----------------- |
+| 3 spans, 30 steps    | 3.4 ms     | 3.1–3.7 ms   | noise             |
+| 1 span, 10,000 steps | 10.1 ms    | 16.2–16.8 ms | 0.6 µs per step   |
+| 200 Effect spans     | 3.9–5.0 ms | 9.9–13.1 ms  | 25–45 µs per span |
+
+200 plain Workers spans cost 3.5 to 4 ms, so the platform takes about 20 µs of
+each span. The rest comes from running each Effect step in the request's
+context. Keep heavy loops out of Effect if they run many thousand steps.
+
 ## License
 
 MIT

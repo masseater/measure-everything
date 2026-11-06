@@ -4,9 +4,8 @@ import { Option, pipe } from "effect";
 import { Elysia as PlainElysia } from "elysia";
 import type { ElysiaConfig } from "elysia";
 
+import type { Handle } from "./route-handlers.ts";
 import { markFailed, recordStatus, requestSpans, traced } from "./span.ts";
-
-type Handle = (request: Request) => Promise<Response>;
 
 type Fetch = PlainElysia["fetch"];
 
@@ -67,5 +66,6 @@ const Elysia: typeof PlainElysia = new Proxy(PlainElysia, {
   },
 });
 
-export type { Handle };
+export type { Handle, RouteHandler, RouteHandlers } from "./route-handlers.ts";
+export { routeHandlers } from "./route-handlers.ts";
 export { Elysia };

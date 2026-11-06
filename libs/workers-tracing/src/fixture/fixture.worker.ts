@@ -1,7 +1,7 @@
 import type { KVNamespace } from "@cloudflare/workers-types/index.ts";
 import { run } from "@r_masseater/workers-tracing/effect";
-import { Elysia } from "@r_masseater/workers-tracing/elysia";
-import type { Handle } from "@r_masseater/workers-tracing/elysia";
+import { Elysia, routeHandlers } from "@r_masseater/workers-tracing/elysia";
+import type { Handle, RouteHandler } from "@r_masseater/workers-tracing/elysia";
 import { traceRequest, traceServerFn } from "@r_masseater/workers-tracing/tanstack-start";
 import { Array as Arr, Effect, Option, Schema, String, pipe } from "effect";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
@@ -51,6 +51,8 @@ const compiled = new Elysia({ adapter: CloudflareAdapter })
 const viaCompiled = (request: Request): Effect.Effect<Response> =>
   Effect.promise(() => Promise.resolve(compiled.fetch(request)));
 
+const respond = (env: Env): RouteHandler => routeHandlers(app(env).handle).GET;
+
 const viaStartRoute = (env: Env, request: Request): Effect.Effect<Response> =>
   Effect.promise(() =>
     traceRequest({
@@ -59,7 +61,7 @@ const viaStartRoute = (env: Env, request: Request): Effect.Effect<Response> =>
       handlerType: "router",
       next: () =>
         run(
-          Effect.promise(() => app(env).handle(request)).pipe(
+          Effect.promise(() => respond(env)({ request })).pipe(
             Effect.map((response) => ({ response })),
           ),
         ),

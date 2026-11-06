@@ -17,9 +17,10 @@ import {
   pipe,
 } from "effect";
 import { Command, Flag } from "effect/cli";
-import { FetchHttpClient } from "effect/http";
+import { FetchHttpClient, HttpClient } from "effect/http";
 
-import { missingOf, render, spanOf } from "./trace-tree.ts";
+import { missingOf, render, spanOf, traceOf } from "./trace-tree.ts";
+import type { ReceivedSpan } from "./trace-tree.ts";
 
 const DEFAULT_SINK = "masseater-dev-trace-sink";
 const DEFAULT_MINUTES = 15;
@@ -84,11 +85,23 @@ const query = Effect.fn("workers-traces.query")(function* query({
   );
 });
 
+type Select = (spans: readonly ReceivedSpan[]) => readonly ReceivedSpan[];
+
+const MARKER = "workers-traces";
+
+const send = Effect.fn("workers-traces.send")(function* send(url: string) {
+  const marked = new URL(url);
+  marked.searchParams.set(MARKER, (yield* Clock.currentTimeMillis).toString());
+  yield* HttpClient.get(marked.href);
+  return traceOf(marked.href);
+});
+
 const check = Effect.fn("workers-traces.check")(function* check(
   options: Query,
   expected: readonly string[],
+  select: Select,
 ) {
-  const spans = yield* query(options);
+  const spans = select(yield* query(options));
   const missing = missingOf(expected)(spans);
   if (Arr.isReadonlyArrayNonEmpty(missing)) {
     return yield* MissingSpans.make({ missing });
@@ -126,6 +139,10 @@ const command = Command.make(
       Flag.withDefault(DEFAULT_LIMIT),
       Flag.withDescription("Most spans to read"),
     ),
+    request: Flag.String("request").pipe(
+      Flag.optional,
+      Flag.withDescription("Send a GET to this URL first and look only at the trace it starts"),
+    ),
     expect: Flag.String("expect").pipe(
       Flag.between(FEWEST_EXPECTED, Number.POSITIVE_INFINITY),
       Flag.withDescription("Span name that must be present; fails when any is missing"),
@@ -135,11 +152,17 @@ const command = Command.make(
       Flag.withDescription("Seconds to keep retrying until every expected span arrives"),
     ),
   },
-  ({ expect, wait, ...options }) =>
-    check(options, expect).pipe(
-      Effect.retry({ schedule: retryFor(wait), while: Predicate.isTagged("MissingSpans") }),
-      Effect.flatMap((spans) => Console.log(render(spans))),
-    ),
+  ({ expect, wait, request, ...options }) =>
+    Effect.gen(function* run() {
+      const select = yield* Option.match(request, {
+        onNone: () => Effect.succeed<Select>((spans) => spans),
+        onSome: send,
+      });
+      const spans = yield* check(options, expect, select).pipe(
+        Effect.retry({ schedule: retryFor(wait), while: Predicate.isTagged("MissingSpans") }),
+      );
+      yield* Console.log(render(spans));
+    }),
 );
 
 const services = Layer.mergeAll(CredentialsFromEnv, FetchHttpClient.layer, NodeServices.layer);

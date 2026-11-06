@@ -33,7 +33,7 @@ const taggedError = Schema.TaggedError;
 
 class MissingSpans extends taggedError<MissingSpans, { readonly brand: unique symbol }>()(
   "MissingSpans",
-  { missing: Schema.Array(Schema.String) },
+  { missing: Schema.Array(Schema.String), message: Schema.String },
 ) {}
 
 type Query = Readonly<{
@@ -104,7 +104,10 @@ const check = Effect.fn("workers-traces.check")(function* check(
   const spans = select(yield* query(options));
   const missing = missingOf(expected)(spans);
   if (Arr.isReadonlyArrayNonEmpty(missing)) {
-    return yield* MissingSpans.make({ missing });
+    return yield* MissingSpans.make({
+      missing,
+      message: `Missing spans: ${Arr.join(missing, ", ")}`,
+    });
   }
   return spans;
 });

@@ -254,7 +254,7 @@ export default defineConfig({
           "audit",
         ],
       },
-      test: { command: "vp test run", cache: false },
+      test: "vp test run",
       syncpack: "syncpack lint",
       audit: {
         command:

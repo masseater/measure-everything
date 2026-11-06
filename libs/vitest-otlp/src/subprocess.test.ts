@@ -31,6 +31,7 @@ const runChild = (
     Effect.flatMap((spawner) =>
       spawner.exitCode(
         ChildProcess.make(process.execPath, ["-e", CHILD_SCRIPT], {
+          cwd: import.meta.dirname,
           env: { ...env, OTEL_SERVICE_NAME: serviceName },
           extendEnv: true,
         }),

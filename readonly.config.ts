@@ -39,6 +39,7 @@ const readonlyParameterTypes: RuleConfig = {
     },
     { from: "package", package: "puppeteer-core", name: ["Browser", "Page"] },
     { from: "package", package: "miniflare", name: "Miniflare" },
+    { from: "package", package: "@alchemy.run/cloudflare", name: "WorkerProps" },
     { from: "package", package: "@types/node", name: ["Request", "Response"] },
     {
       from: "package",

@@ -1,6 +1,17 @@
 import type { Span as WorkersSpan } from "@cloudflare/workers-types/index.ts";
 import { tracing } from "cloudflare:workers";
-import { Cause, Exit, Layer, Logger, Option, Predicate, Tracer, pipe } from "effect";
+import {
+  Cause,
+  Effect,
+  Exit,
+  Layer,
+  Logger,
+  ManagedRuntime,
+  Option,
+  Predicate,
+  Tracer,
+  pipe,
+} from "effect";
 import type { Fiber } from "effect";
 
 import { capture } from "./context.ts";
@@ -105,4 +116,19 @@ const layer: Layer.Layer<never> = Layer.mergeAll(
   Logger.layer([consoleLogger]),
 );
 
-export { inSpanContext, layer };
+type Run<Services> = <Success, Failure>(
+  effect: Effect.Effect<Success, Failure, Services>,
+) => Promise<Success>;
+
+const runner = <Services, LayerError>(
+  services: Layer.Layer<Services, LayerError>,
+): Run<Services> => {
+  const runtime = ManagedRuntime.make(Layer.mergeAll(services, layer));
+  return (effect) =>
+    runtime.runPromise(
+      effect.pipe(Effect.tapCause((cause) => Effect.logError("request failed", cause))),
+    );
+};
+
+export type { Run };
+export { inSpanContext, layer, runner };

@@ -1,8 +1,8 @@
 import type { KVNamespace } from "@cloudflare/workers-types/index.ts";
-import { layer } from "@r_masseater/workers-tracing/effect";
-import { elysiaTracing, tracedHandle } from "@r_masseater/workers-tracing/elysia";
+import { runner } from "@r_masseater/workers-tracing/effect";
+import { elysiaTracing, routeHandlers, tracedHandle } from "@r_masseater/workers-tracing/elysia";
 import { traceRequest, traceServerFn } from "@r_masseater/workers-tracing/tanstack-start";
-import { Effect, ManagedRuntime, Schema, String, pipe } from "effect";
+import { Array as Arr, Effect, Layer, Option, Schema, String, pipe } from "effect";
 import { Elysia } from "elysia";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
 
@@ -20,7 +20,7 @@ class GreetingFailed extends taggedError<GreetingFailed, { readonly brand: uniqu
 const SERVER_ERROR = 500;
 const SERVER_FN = { id: "fn-1", name: "saveGreetingFn", filename: "src/greeting.ts" };
 
-const runtime = ManagedRuntime.make(layer);
+const run = runner(Layer.empty);
 
 const saveGreeting = (env: Env, key: string): Effect.Effect<string> =>
   Effect.promise(() => env.CACHE.put(key, "hello")).pipe(
@@ -37,21 +37,34 @@ const failGreeting = (): Effect.Effect<Response> =>
     Effect.orElseSucceed(() => new Response("failed", { status: SERVER_ERROR })),
   );
 
-const items = (env: Env, request: Request): Promise<Response> =>
-  tracedHandle(
-    new Elysia({ adapter: CloudflareAdapter, aot: false })
-      .use(elysiaTracing)
-      .get("/items/:id", ({ params }) => runtime.runPromise(saveGreeting(env, `item-${params.id}`)))
-      .handle,
-  )(request);
+const app = (env: Env): Elysia["handle"] =>
+  new Elysia({ adapter: CloudflareAdapter, aot: false })
+    .use(elysiaTracing)
+    .get("/items/:id", ({ params }) => run(saveGreeting(env, `item-${params.id}`)))
+    .get("/api/items/:id", ({ params }) => run(saveGreeting(env, `api-${params.id}`))).handle;
+
+const items = (env: Env, request: Request): Promise<Response> => tracedHandle(app(env))(request);
+
+const viaStartRoute = (env: Env, request: Request): Effect.Effect<Response> =>
+  Effect.promise(() =>
+    traceRequest({
+      request,
+      pathname: new URL(request.url).pathname,
+      handlerType: "router",
+      next: () => {
+        const { GET: handleGet } = routeHandlers(app(env));
+        return handleGet({ request }).then((response) => ({ response }));
+      },
+    }),
+  ).pipe(Effect.map(({ response }) => response));
 
 const callServerFn = (env: Env): Promise<{ readonly response: Response }> =>
-  runtime.runPromise(
+  run(
     Effect.promise(() =>
       traceServerFn({
         method: "POST",
         serverFnMeta: SERVER_FN,
-        next: () => runtime.runPromise(saveGreeting(env, "server-fn")),
+        next: () => run(saveGreeting(env, "server-fn")),
       }),
     ).pipe(Effect.map((key) => ({ response: new Response(key) }))),
   );
@@ -66,24 +79,34 @@ const viaStart = (env: Env, request: Request): Effect.Effect<Response> =>
     }),
   ).pipe(Effect.map(({ response }) => response));
 
-const route = (env: Env, request: Request): Effect.Effect<Response> => {
-  const { pathname } = new URL(request.url);
-  if (pipe(pathname, String.startsWith("/items/"))) {
-    return Effect.promise(() => items(env, request));
-  }
-  if (pathname === "/start") {
-    return viaStart(env, request);
-  }
-  if (pathname === "/fail") {
-    return failGreeting();
-  }
-  return saveGreeting(env, pipe(pathname, String.slice("/".length))).pipe(
+type Route = (env: Env, request: Request) => Effect.Effect<Response>;
+
+const ROUTES: readonly (readonly [string, Route])[] = [
+  ["/api/", viaStartRoute],
+  ["/items/", (env, request) => Effect.promise(() => items(env, request))],
+  ["/start", viaStart],
+  ["/fail", failGreeting],
+];
+
+const greet: Route = (env, request) =>
+  saveGreeting(env, pipe(new URL(request.url).pathname, String.slice("/".length))).pipe(
     Effect.map((key) => new Response(key)),
+  );
+
+const route: Route = (env, request) => {
+  const { pathname } = new URL(request.url);
+  return pipe(
+    ROUTES,
+    Arr.findFirst(([prefix]) => pipe(pathname, String.startsWith(prefix))),
+    Option.match({
+      onNone: () => greet(env, request),
+      onSome: ([, handle]) => handle(env, request),
+    }),
   );
 };
 
 const worker = {
-  fetch: (request: Request, env: Env): Promise<Response> => runtime.runPromise(route(env, request)),
+  fetch: (request: Request, env: Env): Promise<Response> => run(route(env, request)),
 };
 
 export default worker;

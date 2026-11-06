@@ -2,7 +2,7 @@ import { createMiddleware } from "@tanstack/react-start";
 import { tracing } from "cloudflare:workers";
 import { Function } from "effect";
 
-import { recordStatus, traced } from "./span.ts";
+import { recordStatus, requestSpans, traced } from "./span.ts";
 
 interface StartRequest<Result> {
   readonly request: Request;
@@ -29,6 +29,7 @@ const traceRequest = <Result extends { readonly response: Response }>({
       "url.path": pathname,
       "tanstack_start.handler": handlerType,
     });
+    requestSpans.set(request, span);
     return traced(({ response }: Result) => recordStatus(response.status))(next)(span);
   });
 

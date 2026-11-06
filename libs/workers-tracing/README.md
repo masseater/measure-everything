@@ -10,7 +10,25 @@ It targets one stack only: Cloudflare Workers with Effect 4, TanStack Start 1
 and Elysia 1. It uses
 [custom spans](https://developers.cloudflare.com/workers/observability/traces/custom-spans/).
 They need a compatibility date of 2026-07-28 or later.
-Turn on `observability.traces.enabled` for the Worker.
+
+## Alchemy
+
+`withWorkersTracing` wraps the providers of an [Alchemy](https://alchemy.run)
+stack. It changes every Worker the stack declares, including the ones a
+`Website` creates. Logs and traces are turned on and kept. Traces also go to the
+`masseater-dev-traces` destination. The compatibility date becomes 2026-08-25
+if it was older. A Worker's own settings win where they ask for more. Versions
+of another Worker are left alone.
+
+```ts
+import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
+
+export default Stack(
+  APP_NAME,
+  { providers: withWorkersTracing(providers()), state: state() },
+  stack,
+);
+```
 
 ## Effect
 
@@ -22,6 +40,15 @@ logs carry the span they were written in. Provide it once, for example to a
 import { layer } from "@r_masseater/workers-tracing/effect";
 
 const runtime = ManagedRuntime.make(Layer.mergeAll(appLayer, layer));
+```
+
+`runner` builds that runtime and returns a function that runs an Effect as a
+Promise, logging the cause when it fails.
+
+```ts
+import { runner } from "@r_masseater/workers-tracing/effect";
+
+const run = runner(appLayer);
 ```
 
 A span follows the request that started its fiber, even when one runtime
@@ -56,6 +83,38 @@ import { elysiaTracing, tracedHandle } from "@r_masseater/workers-tracing/elysia
 const traced = new Elysia({ adapter: CloudflareAdapter }).use(elysiaTracing);
 const api = traced.get("/items/:id", item);
 const handle = tracedHandle(api.handle);
+```
+
+An API route that hands requests to Elysia can use `routeHandlers`. The request
+may already have a span from `requestSpan`. The Elysia route then reuses it, so
+the request does not get a second span.
+
+```ts
+import { routeHandlers } from "@r_masseater/workers-tracing/elysia";
+
+export const Route = createFileRoute("/api/$")({
+  server: { handlers: routeHandlers(api.handle) },
+});
+```
+
+## Checking the spans
+
+The `masseater-dev-traces` destination sends every span to a Worker that logs
+each one as `otlp.span`. `workers-traces` reads those logs back through the
+Workers Observability API. It prints each trace as a tree with durations. It
+reads `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+
+```sh
+workers-traces --service my-worker --minutes 30
+```
+
+With `--expect`, it fails unless every named span arrived. `--wait` keeps
+asking until they do, so a deploy job can send a request and then check that
+its spans came through.
+
+```sh
+curl -fsS https://example.com/
+workers-traces --service my-worker --expect "GET /" --expect d1_all --wait 120
 ```
 
 ## Cost

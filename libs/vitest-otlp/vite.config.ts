@@ -3,6 +3,11 @@ import { defineConfig } from "vite-plus";
 import { otlp } from "./src/index.ts";
 
 export default defineConfig({
+  run: {
+    tasks: {
+      generate: { command: "buf generate", cache: false },
+    },
+  },
   plugins: [otlp()],
   pack: [
     {

@@ -2,7 +2,7 @@ Before starting work, read and follow the `repo-conventions` and `vite-plus` ski
 
 ## Commands
 
-- `vp run build` in each package builds `dist/` with `vp pack`.
+- `vp pack` in each package builds `dist/`; `prepack` runs it before publishing.
 - `vp run generate` in `libs/vitest-otlp` regenerates the protobuf-es code in `src/generated` from opentelemetry-proto. Never edit the generated files.
 
 ## Layout

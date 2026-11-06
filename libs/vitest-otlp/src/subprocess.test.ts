@@ -10,6 +10,8 @@ import { receiverAddress, waitForSpans } from "./index.ts";
 const services = ManagedRuntime.make(NodeServices.layer);
 afterAll(() => services.dispose());
 
+const SUCCESS = 0;
+
 const CHILD_SCRIPT = `
   const { trace } = require("@opentelemetry/api");
   const { NodeSDK } = require("@opentelemetry/sdk-node");
@@ -31,10 +33,16 @@ const runChild = (
     Effect.flatMap((spawner) =>
       spawner.exitCode(
         ChildProcess.make(process.execPath, ["-e", CHILD_SCRIPT], {
+          cwd: import.meta.dirname,
           env: { ...env, OTEL_SERVICE_NAME: serviceName },
           extendEnv: true,
         }),
       ),
+    ),
+    Effect.tap((exitCode) =>
+      Effect.sync(() => {
+        expect(exitCode).toBe(SUCCESS);
+      }),
     ),
   );
 

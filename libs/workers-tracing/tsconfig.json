@@ -2,6 +2,25 @@
   "extends": "../../tsconfig.base.json",
   "include": ["src", "vite.config.ts"],
   "compilerOptions": {
-    "types": ["node", "@cloudflare/workers-types"]
+    "types": ["node", "@cloudflare/workers-types"],
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/platform-node/NodeRuntime#runMain",
+          "@effect/platform-node/NodeServices#layer",
+          "effect/cli/Command#make",
+          "effect/cli/Command#run",
+          "effect/cli/Flag#Int",
+          "effect/cli/Flag#String",
+          "effect/cli/Flag#between",
+          "effect/cli/Flag#optional",
+          "effect/cli/Flag#withDefault",
+          "effect/cli/Flag#withDescription",
+          "effect/cli/Flag#withFallbackConfig",
+          "effect/http/FetchHttpClient#layer"
+        ]
+      }
+    ]
   }
 }

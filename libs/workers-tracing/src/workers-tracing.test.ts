@@ -160,3 +160,19 @@ test("TanStack Start requests and server functions are spans", () =>
     });
     expect(saves).toMatchObject([{ attributes: { "greeting.key": "server-fn" } }]);
   }).pipe(Effect.scoped, Effect.runPromise));
+
+test("an Elysia route behind a TanStack Start route reuses the request span", () =>
+  Effect.gen(function* sharedSpan() {
+    const miniflare = yield* withMiniflare;
+    yield* get(miniflare, "/api/items/7");
+    const request = yield* oneSpan((span) => span.name === "GET /api/items/:id");
+    expect(request.attributes).toMatchObject({
+      "tanstack_start.handler": "router",
+      "http.route": "/api/items/:id",
+      "http.response.status_code": 200,
+    });
+    const saves = yield* waitForSpans({
+      where: (span) => span.name === "greeting.save" && span.parentSpanId === request.spanId,
+    });
+    expect(saves).toMatchObject([{ attributes: { "greeting.key": "api-7" } }]);
+  }).pipe(Effect.scoped, Effect.runPromise));

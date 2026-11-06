@@ -16,6 +16,8 @@ interface Exception {
 
 const SERVER_ERROR = 500;
 
+const requestSpans = new WeakMap<Request, Span>();
+
 const exceptionOf = (error: unknown): Exception =>
   pipe(
     Option.liftPredicate(error, Predicate.isError),
@@ -75,4 +77,4 @@ const traced =
       ),
     );
 
-export { firstError, markFailed, recordStatus, traced };
+export { firstError, markFailed, recordStatus, requestSpans, traced };

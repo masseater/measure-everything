@@ -15,8 +15,8 @@ or a span middleware per repository.
 
 In an Alchemy stack, wrap the providers with its `withWorkersTracing`. Do not
 write `observability` and a compatibility date on each Worker. A Worker added
-later is then traced without anyone remembering to. After each deploy, send a
-request and run `workers-traces --expect <span> --wait <seconds>`. A span that
+later is then traced without anyone remembering to. After each deploy, run
+`workers-traces --request <url> --expect <span> --wait <seconds>`. A span that
 stops arriving then fails the deploy job.
 
 Send traces and logs to an OTLP backend through

@@ -30,6 +30,7 @@ const SpanAnnotations = Schema.Struct({
   spanName: Schema.String,
   startTimeUnixNano: Schema.optional(UnixNano),
   endTimeUnixNano: Schema.optional(UnixNano),
+  attributes: Schema.optional(Schema.Unknown),
 });
 
 type ReceivedSpan = typeof SpanAnnotations.Type;
@@ -119,6 +120,32 @@ const isSeenIn =
       Arr.some((span) => span.spanName === name),
     );
 
+const RequestUrl = Schema.Struct({ url: Schema.Struct({ full: Schema.String }) });
+
+const decodeRequestUrl = Schema.decodeUnknownOption(RequestUrl);
+
+const startedBy =
+  (url: string) =>
+  ({ attributes }: ReceivedSpan): boolean =>
+    pipe(
+      decodeRequestUrl(attributes),
+      Option.exists((decoded) => decoded.url.full === url),
+    );
+
+const traceOf =
+  (url: string) =>
+  (spans: readonly ReceivedSpan[]): readonly ReceivedSpan[] => {
+    const traceIds = pipe(
+      spans,
+      Arr.filter(startedBy(url)),
+      Arr.map(({ traceId }) => traceId),
+    );
+    return pipe(
+      spans,
+      Arr.filter(({ traceId }) => Arr.contains(traceIds, traceId)),
+    );
+  };
+
 const missingOf =
   (expected: readonly string[]) =>
   (spans: readonly ReceivedSpan[]): readonly string[] => {
@@ -126,5 +153,5 @@ const missingOf =
     return pipe(expected, Arr.filter(isMissing));
   };
 
-export { missingOf, render, spanOf };
+export { missingOf, render, spanOf, traceOf };
 export type { ReceivedSpan };

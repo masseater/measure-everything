@@ -109,12 +109,12 @@ workers-traces --service my-worker --minutes 30
 ```
 
 With `--expect`, it fails unless every named span arrived. `--wait` keeps
-asking until they do, so a deploy job can send a request and then check that
-its spans came through.
+asking until they do. `--request` sends a GET to a URL first and looks only at
+the trace that request started. A deploy job can then check its own request.
 
 ```sh
-curl -fsS https://example.com/
-workers-traces --service my-worker --expect "GET /" --expect d1_all --wait 120
+workers-traces --request https://example.com/ \
+  --expect "GET /" --expect d1_all --wait 120
 ```
 
 ## Cost

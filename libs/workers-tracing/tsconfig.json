@@ -18,7 +18,10 @@
           "effect/cli/Flag#withDefault",
           "effect/cli/Flag#withDescription",
           "effect/cli/Flag#withFallbackConfig",
-          "effect/http/FetchHttpClient#layer"
+          "effect/http/FetchHttpClient#layer",
+          "effect/http/HttpClient#HttpClient",
+          "effect/http/HttpClient#get",
+          "effect/http/HttpClientError#HttpClientError"
         ]
       }
     ]

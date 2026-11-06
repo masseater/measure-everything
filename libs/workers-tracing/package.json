@@ -31,14 +31,26 @@
   "type": "module",
   "exports": {
     "./alchemy": "./src/alchemy.ts",
-    "./effect": "./src/effect.ts",
-    "./elysia": "./src/elysia.ts",
+    "./elysia": {
+      "workerd": "./src/elysia.ts",
+      "node": "./src/elysia.plain.ts",
+      "default": "./src/elysia.ts"
+    },
     "./tanstack-start": {
       "workerd": "./src/tanstack-start.ts",
-      "browser": "./src/tanstack-start.browser.ts",
+      "browser": "./src/tanstack-start.plain.ts",
+      "node": "./src/tanstack-start.plain.ts",
       "default": "./src/tanstack-start.ts"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./effect": {
+      "workerd": "./src/effect.ts",
+      "browser": "./src/effect.plain.ts",
+      "node": "./src/effect.plain.ts",
+      "default": "./src/effect.ts"
+    },
+    "./oxlint": "./src/oxlint.ts",
+    "./trace-sink-worker": "./src/trace-sink.worker.ts"
   },
   "publishConfig": {
     "bin": {
@@ -49,21 +61,32 @@
         "types": "./dist/alchemy.d.ts",
         "default": "./dist/alchemy.js"
       },
-      "./effect": {
-        "types": "./dist/effect.d.ts",
-        "default": "./dist/effect.js"
-      },
       "./elysia": {
         "types": "./dist/elysia.d.ts",
+        "workerd": "./dist/elysia.js",
+        "node": "./dist/elysia.plain.js",
         "default": "./dist/elysia.js"
       },
       "./tanstack-start": {
         "types": "./dist/tanstack-start.d.ts",
         "workerd": "./dist/tanstack-start.js",
-        "browser": "./dist/tanstack-start.browser.js",
+        "browser": "./dist/tanstack-start.plain.js",
+        "node": "./dist/tanstack-start.plain.js",
         "default": "./dist/tanstack-start.js"
       },
-      "./package.json": "./package.json"
+      "./package.json": "./package.json",
+      "./effect": {
+        "types": "./dist/effect.d.ts",
+        "workerd": "./dist/effect.js",
+        "browser": "./dist/effect.plain.js",
+        "node": "./dist/effect.plain.js",
+        "default": "./dist/effect.js"
+      },
+      "./oxlint": {
+        "types": "./dist/oxlint.d.ts",
+        "default": "./dist/oxlint.js"
+      },
+      "./trace-sink-worker": "./dist/trace-sink.worker.js"
     },
     "access": "public",
     "provenance": true
@@ -106,9 +129,6 @@
       "optional": true
     },
     "alchemy": {
-      "optional": true
-    },
-    "effect": {
       "optional": true
     },
     "elysia": {

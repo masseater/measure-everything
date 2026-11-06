@@ -22,7 +22,7 @@ import { FetchHttpClient, HttpClient } from "effect/http";
 import { missingOf, render, spanOf, traceOf } from "./trace-tree.ts";
 import type { ReceivedSpan } from "./trace-tree.ts";
 
-const DEFAULT_SINK = "masseater-dev-trace-sink";
+const DEFAULT_SINK = "workers-tracing-sink";
 const DEFAULT_MINUTES = 15;
 const DEFAULT_LIMIT = 500;
 const DEFAULT_WAIT_SECONDS = 0;
@@ -119,6 +119,7 @@ const retryFor = (seconds: number): Schedule.Schedule<number> =>
   retryInterval.pipe(Schedule.upTo({ duration: Duration.seconds(seconds) }));
 
 const accountConfig = Config.String("CLOUDFLARE_ACCOUNT_ID");
+const sinkConfig = Config.String("WORKERS_TRACES_SINK");
 
 const command = Command.make(
   "workers-traces",
@@ -128,8 +129,9 @@ const command = Command.make(
       Flag.withDescription("Cloudflare account ID"),
     ),
     sink: Flag.String("sink").pipe(
+      Flag.withFallbackConfig(sinkConfig),
       Flag.withDefault(DEFAULT_SINK),
-      Flag.withDescription("Name of the Worker that logs the received spans as otlp.span"),
+      Flag.withDescription("Name of the traceSink Worker that logs the received spans"),
     ),
     service: Flag.String("service").pipe(
       Flag.optional,

@@ -1,0 +1,3 @@
+const COMPATIBILITY_DATE = "2026-08-25";
+
+export { COMPATIBILITY_DATE };

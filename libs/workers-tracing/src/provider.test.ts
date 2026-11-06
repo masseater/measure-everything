@@ -6,20 +6,17 @@ import { noopSession } from "alchemy/Report";
 import { Array as Arr, Effect, ManagedRuntime, Option } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import {
-  COMPATIBILITY_DATE,
-  TRACE_DESTINATION,
-  traced,
-  tuneService,
-  withWorkersTracing,
-} from "./alchemy.ts";
+import { COMPATIBILITY_DATE, traced, tuneService, withWorkersTracing } from "./alchemy.ts";
+
+const TRACE_DESTINATION = "traces";
+const OPTIONS = { destinations: [TRACE_DESTINATION] };
 
 const OLD_DATE = "2026-01-01";
 const NEW_DATE = "2026-12-01";
 const MODES = 3;
 
 test("a Worker gets logs, traces, the trace destination and a new enough compatibility date", () => {
-  expect(traced({ main: "worker.ts", compatibility: { date: OLD_DATE } })).toMatchObject({
+  expect(traced(OPTIONS)({ main: "worker.ts", compatibility: { date: OLD_DATE } })).toMatchObject({
     main: "worker.ts",
     compatibility: { date: COMPATIBILITY_DATE },
     observability: {
@@ -30,27 +27,39 @@ test("a Worker gets logs, traces, the trace destination and a new enough compati
   });
 });
 
-test("a Worker keeps its own newer date, log settings and destinations", () => {
+test("a Worker keeps its own newer date, log and trace settings and destinations", () => {
   expect(
-    traced({
+    traced(OPTIONS)({
       compatibility: { date: NEW_DATE, flags: ["nodejs_compat"] },
       observability: {
         logs: { enabled: true, invocationLogs: false },
-        traces: { destinations: ["elsewhere", TRACE_DESTINATION] },
+        traces: { persist: false, destinations: ["elsewhere", TRACE_DESTINATION] },
       },
     }),
   ).toMatchObject({
     compatibility: { date: NEW_DATE, flags: ["nodejs_compat"] },
     observability: {
       logs: { invocationLogs: false },
-      traces: { destinations: ["elsewhere", TRACE_DESTINATION] },
+      traces: { enabled: true, persist: false, destinations: ["elsewhere", TRACE_DESTINATION] },
     },
   });
 });
 
 test("a version of another Worker is left alone", () => {
   const props: WorkerProps = { version: { parent: "site" } };
-  expect(traced(props)).toBe(props);
+  expect(traced(OPTIONS)(props)).toBe(props);
+});
+
+test("a Worker that turns its traces off is left alone", () => {
+  const props: WorkerProps = { observability: { traces: { enabled: false } } };
+  expect(traced(OPTIONS)(props)).toBe(props);
+});
+
+test("a Worker that tags its own versions is still traced", () => {
+  expect(traced(OPTIONS)({ version: { tag: "release" } })).toMatchObject({
+    version: { tag: "release" },
+    observability: { traces: { enabled: true, destinations: [TRACE_DESTINATION] } },
+  });
 });
 
 type WorkerService = ProviderService<Worker>;
@@ -86,7 +95,7 @@ const reconciledNews: (variant: Readonly<typeof fakeVariant>) => Effect.Effect<u
 
 test("every mode of the Worker provider reconciles traced props", () =>
   Effect.gen(function* everyMode() {
-    const tuned = tuneService(fakeProvider);
+    const tuned = tuneService(OPTIONS)(fakeProvider);
     const news = yield* Effect.all([
       reconciledNews(tuned),
       tuned.modes.live.pipe(Effect.flatMap(reconciledNews)),
@@ -102,7 +111,7 @@ test("every mode of the Worker provider reconciles traced props", () =>
 
 const registration = providerLayer(Worker, Effect.succeed(fakeProvider));
 
-const stack = ManagedRuntime.make(withWorkersTracing(registration));
+const stack = ManagedRuntime.make(withWorkersTracing(OPTIONS)(registration));
 
 test("a stack's providers answer for Workers with the traced provider", () =>
   stack.runPromise(

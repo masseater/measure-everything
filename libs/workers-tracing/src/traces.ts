@@ -28,6 +28,7 @@ const DEFAULT_LIMIT = 500;
 const DEFAULT_WAIT_SECONDS = 0;
 const RETRY_SECONDS = 10;
 const FEWEST_EXPECTED = 0;
+const CLOCK_SKEW_SECONDS = 30;
 
 const taggedError = Schema.TaggedError;
 
@@ -42,6 +43,7 @@ type Query = Readonly<{
   service: Option.Option<string>;
   minutes: number;
   limit: number;
+  since: Option.Option<number>;
 }>;
 
 const equals = (key: string, value: string) =>
@@ -53,9 +55,13 @@ const query = Effect.fn("workers-traces.query")(function* query({
   service,
   minutes,
   limit,
+  since,
 }: Query) {
   const to = yield* Clock.currentTimeMillis;
-  const from = to - Duration.toMillis(Duration.minutes(minutes));
+  const from = Option.match(since, {
+    onNone: () => to - Duration.toMillis(Duration.minutes(minutes)),
+    onSome: (sent) => sent - Duration.toMillis(Duration.seconds(CLOCK_SKEW_SECONDS)),
+  });
   const response = yield* queryObservabilityTelemetry({
     accountId: account,
     queryId: "workers-traces",
@@ -87,21 +93,24 @@ const query = Effect.fn("workers-traces.query")(function* query({
 
 type Select = (spans: readonly ReceivedSpan[]) => readonly ReceivedSpan[];
 
+type Sent = Readonly<{ select: Select; since: Option.Option<number> }>;
+
 const MARKER = "workers-traces";
 
 const send = Effect.fn("workers-traces.send")(function* send(url: string) {
+  const sentAt = yield* Clock.currentTimeMillis;
   const marked = new URL(url);
-  marked.searchParams.set(MARKER, (yield* Clock.currentTimeMillis).toString());
+  marked.searchParams.set(MARKER, sentAt.toString());
   yield* HttpClient.get(marked.href);
-  return traceOf(marked.href);
+  return { select: traceOf(marked.href), since: Option.some(sentAt) } satisfies Sent;
 });
 
 const check = Effect.fn("workers-traces.check")(function* check(
-  options: Query,
+  options: Omit<Query, "since">,
+  { select, since }: Sent,
   expected: readonly string[],
-  select: Select,
 ) {
-  const traces = yield* query(options);
+  const traces = yield* query({ ...options, since });
   const spans = select(traces);
   const missing = missingOf(expected)(spans);
   if (Arr.isReadonlyArrayNonEmpty(missing)) {
@@ -160,11 +169,11 @@ const command = Command.make(
   },
   ({ expect, wait, request, ...options }) =>
     Effect.gen(function* run() {
-      const select = yield* Option.match(request, {
-        onNone: () => Effect.succeed<Select>((spans) => spans),
+      const sent = yield* Option.match(request, {
+        onNone: () => Effect.succeed<Sent>({ select: (spans) => spans, since: Option.none() }),
         onSome: send,
       });
-      const spans = yield* check(options, expect, select).pipe(
+      const spans = yield* check(options, sent, expect).pipe(
         Effect.retry({ schedule: retryFor(wait), while: Predicate.isTagged("MissingSpans") }),
       );
       yield* Console.log(render(spans));

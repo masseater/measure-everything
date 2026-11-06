@@ -217,10 +217,11 @@ parameter to the URL, so each run finds the trace of its own request.
 
 Without `--request` it prints the traces of the last 15 minutes. `--service
 <worker>` narrows them to one Worker. `--minutes` changes the window, and
-`--limit` the number of spans read, 500 by default. On an account with much
-traffic, raise `--limit`, or the request's trace may fall outside the spans
-read. If the sink Worker has another name than `workers-tracing-sink`, pass it
-with `--sink` or `WORKERS_TRACES_SINK`.
+`--limit` the number of spans read, 500 by default. With `--request` it reads
+only the spans that arrived after the request was sent. Other traffic on the
+account then rarely pushes the request's trace out of the spans read. If it
+still does, raise `--limit`. If the sink Worker has another name than
+`workers-tracing-sink`, pass it with `--sink` or `WORKERS_TRACES_SINK`.
 
 ## How it works
 

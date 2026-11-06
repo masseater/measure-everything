@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1](https://github.com/masseater/measure-everything/compare/v0.1.0...v0.1.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* **vitest-otlp:** run the subprocess test's child in the package directory ([#77](https://github.com/masseater/measure-everything/issues/77)) ([0a551ab](https://github.com/masseater/measure-everything/commit/0a551ab531b8563ead58c7fa9c1de1e09b464a8b))
+* **workers-tracing:** read only spans that arrived after the request ([#74](https://github.com/masseater/measure-everything/issues/74)) ([4f4d3f4](https://github.com/masseater/measure-everything/commit/4f4d3f4dcebdafa28a42c25219b528bc8520356c))
+
 ## [0.1.0](https://github.com/masseater/measure-everything/compare/v0.0.7...v0.1.0) (2026-11-06)
 
 

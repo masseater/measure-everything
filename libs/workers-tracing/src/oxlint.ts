@@ -3,6 +3,7 @@ import { Array as Arr, pipe } from "effect";
 interface RestrictedImport {
   readonly name: string;
   readonly importNames: readonly string[];
+  readonly allowTypeImports?: boolean;
   readonly message: string;
 }
 
@@ -34,6 +35,7 @@ const restrictedImports: readonly RestrictedImport[] = [
   {
     name: "elysia",
     importNames: ["Elysia", "default"],
+    allowTypeImports: true,
     message:
       "Import Elysia from @r_masseater/workers-tracing/elysia, so every handle call is a span.",
   },

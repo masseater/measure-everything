@@ -144,7 +144,8 @@ Add the lint preset to the `lint` section of your `vite.config.ts`. Then `vp
 check` fails on the ways code could skip tracing. It flags `Effect.runPromise`,
 `runSync` and the other run functions of Effect. It also flags
 `ManagedRuntime.make` and importing `Elysia` from `elysia`, by name or as the
-default import.
+default import. A type import such as `import type { Elysia } from "elysia"`
+stays allowed, for annotating an app's type.
 
 ```ts
 import { restrictedImports, restrictedProperties } from "@r_masseater/workers-tracing/oxlint";

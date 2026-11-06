@@ -1,21 +1,12 @@
 import type { Span as WorkersSpan } from "@cloudflare/workers-types/index.ts";
 import { tracing } from "cloudflare:workers";
-import {
-  Cause,
-  Effect,
-  Exit,
-  Layer,
-  Logger,
-  ManagedRuntime,
-  Option,
-  Predicate,
-  Tracer,
-  pipe,
-} from "effect";
+import { Cause, Exit, Layer, Logger, Option, Predicate, Tracer, pipe } from "effect";
 import type { Fiber } from "effect";
 
 import { capture } from "./context.ts";
 import type { RunInContext } from "./context.ts";
+import { runnerWith } from "./run.ts";
+import type { Run, Runner } from "./run.ts";
 import { firstError, markFailed } from "./span.ts";
 
 interface Mirror {
@@ -116,19 +107,9 @@ const layer: Layer.Layer<never> = Layer.mergeAll(
   Logger.layer([consoleLogger]),
 );
 
-type Run<Services> = <Success, Failure>(
-  effect: Effect.Effect<Success, Failure, Services>,
-) => Promise<Success>;
+const runner: Runner = runnerWith(layer);
 
-const runner = <Services, LayerError>(
-  services: Layer.Layer<Services, LayerError>,
-): Run<Services> => {
-  const runtime = ManagedRuntime.make(Layer.mergeAll(services, layer));
-  return (effect) =>
-    runtime.runPromise(
-      effect.pipe(Effect.tapCause((cause) => Effect.logError("request failed", cause))),
-    );
-};
+const run: Run<never> = runner(Layer.empty);
 
-export type { Run };
-export { inSpanContext, layer, runner };
+export type { Run, Runner } from "./run.ts";
+export { inSpanContext, layer, run, runner };

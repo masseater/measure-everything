@@ -1,9 +1,9 @@
 import type { KVNamespace } from "@cloudflare/workers-types/index.ts";
-import { runner } from "@r_masseater/workers-tracing/effect";
-import { elysiaTracing, routeHandlers, tracedHandle } from "@r_masseater/workers-tracing/elysia";
+import { run } from "@r_masseater/workers-tracing/effect";
+import { Elysia } from "@r_masseater/workers-tracing/elysia";
+import type { Handle } from "@r_masseater/workers-tracing/elysia";
 import { traceRequest, traceServerFn } from "@r_masseater/workers-tracing/tanstack-start";
-import { Array as Arr, Effect, Layer, Option, Schema, String, pipe } from "effect";
-import { Elysia } from "elysia";
+import { Array as Arr, Effect, Option, Schema, String, pipe } from "effect";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
 
 interface Env {
@@ -20,8 +20,6 @@ class GreetingFailed extends taggedError<GreetingFailed, { readonly brand: uniqu
 const SERVER_ERROR = 500;
 const SERVER_FN = { id: "fn-1", name: "saveGreetingFn", filename: "src/greeting.ts" };
 
-const run = runner(Layer.empty);
-
 const saveGreeting = (env: Env, key: string): Effect.Effect<string> =>
   Effect.promise(() => env.CACHE.put(key, "hello")).pipe(
     Effect.tap(() => Effect.logInfo(`cached ${key}`)),
@@ -37,13 +35,21 @@ const failGreeting = (): Effect.Effect<Response> =>
     Effect.orElseSucceed(() => new Response("failed", { status: SERVER_ERROR })),
   );
 
-const app = (env: Env): Elysia["handle"] =>
+const app = (env: Env): { readonly handle: Handle } =>
   new Elysia({ adapter: CloudflareAdapter, aot: false })
-    .use(elysiaTracing)
     .get("/items/:id", ({ params }) => run(saveGreeting(env, `item-${params.id}`)))
-    .get("/api/items/:id", ({ params }) => run(saveGreeting(env, `api-${params.id}`))).handle;
+    .get("/api/items/:id", ({ params }) => run(saveGreeting(env, `api-${params.id}`)));
 
-const items = (env: Env, request: Request): Promise<Response> => tracedHandle(app(env))(request);
+const items = (env: Env, request: Request): Promise<Response> => app(env).handle(request);
+
+const compiled = new Elysia({ adapter: CloudflareAdapter })
+  .get("/compiled/:id", ({ params }) =>
+    run(Effect.succeed(params.id).pipe(Effect.withSpan("compiled.load"))),
+  )
+  .compile();
+
+const viaCompiled = (request: Request): Effect.Effect<Response> =>
+  Effect.promise(() => Promise.resolve(compiled.fetch(request)));
 
 const viaStartRoute = (env: Env, request: Request): Effect.Effect<Response> =>
   Effect.promise(() =>
@@ -51,10 +57,12 @@ const viaStartRoute = (env: Env, request: Request): Effect.Effect<Response> =>
       request,
       pathname: new URL(request.url).pathname,
       handlerType: "router",
-      next: () => {
-        const { GET: handleGet } = routeHandlers(app(env));
-        return handleGet({ request }).then((response) => ({ response }));
-      },
+      next: () =>
+        run(
+          Effect.promise(() => app(env).handle(request)).pipe(
+            Effect.map((response) => ({ response })),
+          ),
+        ),
     }),
   ).pipe(Effect.map(({ response }) => response));
 
@@ -85,6 +93,7 @@ const ROUTES: readonly (readonly [string, Route])[] = [
   ["/api/", viaStartRoute],
   ["/items/", (env, request) => Effect.promise(() => items(env, request))],
   ["/start", viaStart],
+  ["/compiled/", (_env, request) => viaCompiled(request)],
   ["/fail", failGreeting],
 ];
 

@@ -15,10 +15,8 @@ const telemetry = Otlp.layerFromConfig({ resource: { serviceName: "semconv-fixtu
 const exportSpan = (attributes: Readonly<Record<string, unknown>>): Promise<void> =>
   Effect.gen(function* spanExport() {
     const runtime = ManagedRuntime.make(telemetry);
-    yield* Effect.provideContext(
-      Effect.withSpan(Effect.void, SPAN_NAME, { attributes }),
-      yield* runtime.contextEffect,
-    );
+    const context = yield* runtime.contextEffect;
+    yield* Effect.provideContext(Effect.withSpan(Effect.void, SPAN_NAME, { attributes }), context);
     yield* runtime.disposeEffect;
     yield* waitForSpans({ where: (span) => span.name === SPAN_NAME });
   }).pipe(Effect.runPromise);

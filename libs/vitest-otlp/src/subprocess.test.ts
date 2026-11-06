@@ -10,10 +10,10 @@ import { receiverAddress, waitForSpans } from "./index.ts";
 const services = ManagedRuntime.make(NodeServices.layer);
 afterAll(() => services.dispose());
 
-const childScript = (serviceName: string): string => `
+const CHILD_SCRIPT = `
   const { trace } = require("@opentelemetry/api");
   const { NodeSDK } = require("@opentelemetry/sdk-node");
-  const sdk = new NodeSDK({ serviceName: ${JSON.stringify(serviceName)} });
+  const sdk = new NodeSDK();
   sdk.start();
   trace.getTracer("child").startSpan("child work").end();
   sdk.shutdown();
@@ -30,8 +30,8 @@ const runChild = (
   ChildProcessSpawner.ChildProcessSpawner.pipe(
     Effect.flatMap((spawner) =>
       spawner.exitCode(
-        ChildProcess.make(process.execPath, ["-e", childScript(serviceName)], {
-          env,
+        ChildProcess.make(process.execPath, ["-e", CHILD_SCRIPT], {
+          env: { ...env, OTEL_SERVICE_NAME: serviceName },
           extendEnv: true,
         }),
       ),
@@ -46,7 +46,8 @@ const fromService = (
 test("a child process inherits the receiver through the environment", () =>
   Effect.gen(function* inherited() {
     yield* runChild("child-http");
-    expect(yield* fromService("child-http")).toMatchObject([{ name: "child work" }]);
+    const spans = yield* fromService("child-http");
+    expect(spans).toMatchObject([{ name: "child work" }]);
   }).pipe(services.runPromise));
 
 test("OTLP/gRPC reaches the receiver too", () =>
@@ -56,7 +57,8 @@ test("OTLP/gRPC reaches the receiver too", () =>
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc",
       OTEL_EXPORTER_OTLP_ENDPOINT: grpcEndpoint,
     });
-    expect(yield* fromService("child-grpc")).toMatchObject([{ name: "child work" }]);
+    const spans = yield* fromService("child-grpc");
+    expect(spans).toMatchObject([{ name: "child work" }]);
   }).pipe(services.runPromise));
 
 test("gzip-compressed exports are read over both transports", () =>
@@ -68,6 +70,8 @@ test("gzip-compressed exports are read over both transports", () =>
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc",
       OTEL_EXPORTER_OTLP_ENDPOINT: grpcEndpoint,
     });
-    expect(yield* fromService("gzip-http")).toMatchObject([{ name: "child work" }]);
-    expect(yield* fromService("gzip-grpc")).toMatchObject([{ name: "child work" }]);
+    const httpSpans = yield* fromService("gzip-http");
+    expect(httpSpans).toMatchObject([{ name: "child work" }]);
+    const grpcSpans = yield* fromService("gzip-grpc");
+    expect(grpcSpans).toMatchObject([{ name: "child work" }]);
   }).pipe(services.runPromise));

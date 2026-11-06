@@ -7,9 +7,8 @@ const bareSpan = { traceId: "a", spanId: "b", name: "bare" };
 
 test("fields an exporter leaves out get empty defaults", () =>
   Effect.gen(function* defaults() {
-    expect(
-      yield* decodeSpans({ resourceSpans: [{ scopeSpans: [{ spans: [bareSpan] }] }] }),
-    ).toStrictEqual([
+    const spans = yield* decodeSpans({ resourceSpans: [{ scopeSpans: [{ spans: [bareSpan] }] }] });
+    expect(spans).toStrictEqual([
       {
         ...bareSpan,
         kind: "SPAN_KIND_UNSPECIFIED",
@@ -23,9 +22,12 @@ test("fields an exporter leaves out get empty defaults", () =>
         scope: { name: "" },
       },
     ]);
-    expect(
-      yield* decodeLogs({ resourceLogs: [{ scopeLogs: [{ logRecords: [{ body: "bare" }] }] }] }),
-    ).toStrictEqual([{ body: "bare", attributes: {}, resource: {}, scope: { name: "" } }]);
+    const logs = yield* decodeLogs({
+      resourceLogs: [{ scopeLogs: [{ logRecords: [{ body: "bare" }] }] }],
+    });
+    expect(logs).toStrictEqual([
+      { body: "bare", attributes: {}, resource: {}, scope: { name: "" } },
+    ]);
   }).pipe(Effect.runPromise));
 
 test("a metric is labelled with the kind of data it carries", () =>

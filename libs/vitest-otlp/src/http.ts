@@ -59,9 +59,11 @@ const receive =
   ): Effect.Effect<HttpServerResponse.HttpServerResponse, HttpServerError.HttpServerError> =>
     Effect.gen(function* receiveExport() {
       const encoding = encodingOf(request);
-      const raw = new Uint8Array(yield* request.arrayBuffer);
+      const buffer = yield* request.arrayBuffer;
+      const raw = new Uint8Array(buffer);
       const body = yield* gunzipWhen(headerStartsWith(request, "content-encoding")("gzip"))(raw);
-      yield* store(endpoint)(yield* encoding.decode(endpoint)(body));
+      const decoded = yield* encoding.decode(endpoint)(body);
+      yield* store(endpoint)(decoded);
       return encoding.respond(endpoint);
     }).pipe(
       Effect.catchTags({

@@ -34,10 +34,12 @@ const post = (
 
 test("an unknown path is not found", () =>
   Effect.gen(function* unknownPath() {
-    expect(yield* post("/v1/profiles", "{}", "application/json")).toBe(HTTP_NOT_FOUND);
+    const status = yield* post("/v1/profiles", "{}", "application/json");
+    expect(status).toBe(HTTP_NOT_FOUND);
   }).pipe(client.runPromise));
 
 test("a body that is not OTLP is rejected", () =>
   Effect.gen(function* notOtlp() {
-    expect(yield* post("/v1/traces", "not json", "application/json")).toBe(HTTP_BAD_REQUEST);
+    const status = yield* post("/v1/traces", "not json", "application/json");
+    expect(status).toBe(HTTP_BAD_REQUEST);
   }).pipe(client.runPromise));

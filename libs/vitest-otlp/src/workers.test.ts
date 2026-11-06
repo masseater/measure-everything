@@ -35,11 +35,16 @@ const withMiniflare = Effect.acquireRelease(
   (miniflare) => Effect.promise(() => miniflare.dispose()),
 );
 
+const fetchApp = Effect.gen(function* fetchApp() {
+  const miniflare = yield* withMiniflare;
+  const response = yield* Effect.promise(() => miniflare.dispatchFetch("http://localhost/"));
+  return yield* Effect.promise(() => response.text());
+});
+
 test("a Worker's automatic spans and logs reach the receiver through a streaming tail worker", () =>
   Effect.gen(function* workerSpans() {
-    const miniflare = yield* withMiniflare;
-    const response = yield* Effect.promise(() => miniflare.dispatchFetch("http://localhost/"));
-    expect(yield* Effect.promise(() => response.text())).toBe("ok");
+    const text = yield* fetchApp;
+    expect(text).toBe("ok");
 
     const servers = yield* waitForSpans({ where: (span) => span.name === "fetch" });
     const server = yield* Effect.fromOption(Array.head(servers));

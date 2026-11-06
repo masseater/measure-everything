@@ -125,9 +125,20 @@ import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
 export default new Elysia({ adapter: CloudflareAdapter }).get("/items/:id", item).compile();
 ```
 
-A TanStack Start route may pass its `request` on to `handle`. The route's span
-is then renamed, not nested under a second one. That needs the same `Request`
-object. A copy or a new `Request` gets its own span under the route's.
+A TanStack Start route can hand its requests to an Elysia app with
+`routeHandlers`. It answers every method with the app's `handle`.
+
+```ts
+import { routeHandlers } from "@r_masseater/workers-tracing/elysia";
+
+export const Route = createFileRoute("/api/$")({
+  server: { handlers: routeHandlers(api.handle) },
+});
+```
+
+A TanStack Start route may also pass its `request` on to `handle` itself. The
+route's span is then renamed, not nested under a second one. That needs the same
+`Request` object. A copy or a new `Request` gets its own span under the route's.
 
 Add the lint preset to the `lint` section of your `vite.config.ts`. Then `vp
 check` fails on the ways code could skip tracing. It flags `Effect.runPromise`,

@@ -1,4 +1,3 @@
-type Handle = (request: Request) => Promise<Response>;
-
-export type { Handle };
+export type { Handle, RouteHandler, RouteHandlers } from "./route-handlers.ts";
+export { routeHandlers } from "./route-handlers.ts";
 export { Elysia } from "elysia";

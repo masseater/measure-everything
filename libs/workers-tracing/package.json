@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/workers-tracing",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Put Effect spans, TanStack Start requests and server functions, and Elysia routes into the automatic traces of Cloudflare Workers, nested with the platform's own D1, KV and fetch spans.",
   "keywords": [
     "cloudflare-workers",

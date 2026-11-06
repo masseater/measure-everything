@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/vitest-otlp",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A Vitest plugin that receives OTLP traces, metrics and logs during tests so tests can assert on the telemetry the code under test actually exported.",
   "keywords": [
     "opentelemetry",

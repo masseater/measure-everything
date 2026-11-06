@@ -1,5 +1,5 @@
 import type { TailStream } from "@cloudflare/workers-types/index.ts";
-import { Array, Match, Option, Predicate, Record, pipe } from "effect";
+import { Array, Match, Option, Predicate, Record, Schema, pipe } from "effect";
 
 import { SeverityNumber } from "./generated/opentelemetry/proto/logs/v1/logs_pb.ts";
 import {
@@ -74,10 +74,17 @@ const onsetAttributes = (onset: TailStream.Onset): readonly Attribute[] => [
   ),
 ];
 
+const encodeJsonText = Schema.encodeUnknownOption(Schema.fromJsonString(Schema.Unknown));
+
 const textOf = (part: unknown): string =>
   Match.value(part).pipe(
     Match.when(Predicate.isString, (text) => text),
-    Match.orElse((other) => JSON.stringify(other)),
+    Match.orElse((other) =>
+      pipe(
+        encodeJsonText(other),
+        Option.getOrElse(() => String(other)),
+      ),
+    ),
   );
 
 const logBody = (message: object | string): string =>

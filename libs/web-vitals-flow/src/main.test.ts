@@ -77,10 +77,10 @@ test("a load and a link transition are measured, reported and traced", () =>
     const origin = yield* serveSite;
     const reportDirectory = yield* fileSystem.makeTempDirectoryScoped();
 
-    expect(yield* measure(origin, reportDirectory)).toBe(SUCCESS);
-    expect(yield* fileSystem.readDirectory(reportDirectory)).toStrictEqual(
-      expect.arrayContaining(["flow-1.html", "flow-1.json"]),
-    );
+    const exitCode = yield* measure(origin, reportDirectory);
+    expect(exitCode).toBe(SUCCESS);
+    const reportFiles = yield* fileSystem.readDirectory(reportDirectory);
+    expect(reportFiles).toStrictEqual(expect.arrayContaining(["flow-1.html", "flow-1.json"]));
     const spans = yield* waitForSpans({
       where: (span) => span.resource["service.name"] === "web-vitals-flow",
       count: 4,

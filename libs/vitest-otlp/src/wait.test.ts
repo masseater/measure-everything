@@ -26,5 +26,6 @@ test("clearing drops what was received so far", () =>
 
     yield* clearTelemetry;
 
-    expect(yield* receivedSpans).toStrictEqual([]);
+    const remaining = yield* receivedSpans;
+    expect(remaining).toStrictEqual([]);
   }).pipe(Effect.runPromise));

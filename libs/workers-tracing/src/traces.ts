@@ -101,7 +101,8 @@ const check = Effect.fn("workers-traces.check")(function* check(
   expected: readonly string[],
   select: Select,
 ) {
-  const spans = select(yield* query(options));
+  const traces = yield* query(options);
+  const spans = select(traces);
   const missing = missingOf(expected)(spans);
   if (Arr.isReadonlyArrayNonEmpty(missing)) {
     return yield* MissingSpans.make({

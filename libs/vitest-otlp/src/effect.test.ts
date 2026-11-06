@@ -21,7 +21,8 @@ const placeOrder = Effect.gen(function* placeOrder() {
 test("Effect's OTLP layers configured from the environment export over OTLP/JSON", () =>
   Effect.gen(function* effectOtlp() {
     const runtime = ManagedRuntime.make(telemetry);
-    yield* Effect.provideContext(placeOrder, yield* runtime.contextEffect);
+    const context = yield* runtime.contextEffect;
+    yield* Effect.provideContext(placeOrder, context);
     yield* runtime.disposeEffect;
 
     const spans = yield* waitForSpans({ where: (span) => span.name === "place order" });

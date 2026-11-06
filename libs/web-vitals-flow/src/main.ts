@@ -59,9 +59,10 @@ const command = Command.make(
             path.join(reportDirectory, `flow-${run.toString()}.html`),
             html,
           );
+          const json = yield* encodeJson(result);
           yield* fileSystem.writeFileString(
             path.join(reportDirectory, `flow-${run.toString()}.json`),
-            yield* encodeJson(result),
+            json,
           );
           return result;
         }),

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.7](https://github.com/masseater/measure-everything/compare/v0.0.6...v0.0.7) (2026-11-06)
+
+
+### Features
+
+* **workers-traces:** check the trace of a request the CLI sends ([#63](https://github.com/masseater/measure-everything/issues/63)) ([359561e](https://github.com/masseater/measure-everything/commit/359561e95b7430f2ad2cdcebb9a7f08ddde5671b))
+* **workers-tracing:** trace every Worker through the Alchemy provider and check that spans arrive ([#62](https://github.com/masseater/measure-everything/issues/62)) ([0d3e73f](https://github.com/masseater/measure-everything/commit/0d3e73f67b76f72bb1b0543d7a4fc9859b4ba260))
+
 ## [0.0.6](https://github.com/masseater/measure-everything/compare/v0.0.5...v0.0.6) (2026-11-05)
 
 

@@ -21,6 +21,7 @@ import {
 import { readonlyParameterTypes } from "./readonly.config.ts";
 
 export default defineConfig({
+  test: { projects: ["apps/*", "libs/*", "infra/*", "tools/*"], passWithNoTests: true },
   staged: {
     "!(*.md)": "vp check --fix",
     "*.md": ["markdownlint-cli2 --fix", "vp check --fix"],
@@ -200,6 +201,19 @@ export default defineConfig({
   run: {
     cache: true,
     tasks: {
+      "markdown-lint": [
+        'markdownlint-cli2 "**/*.md"',
+        'textlint "**/*.md"',
+        `git -c core.quotePath=false ls-files -co --exclude-standard '*.md' | git -c core.quotePath=false -c core.excludesFile=.textlintignore check-ignore --no-index --stdin -nv | awk -F '\\t' '$1 == "::" { print $2 }' | tr '\\n' '\\0' | xargs -0 -r -n 1 -P 4 python3 "$(skills ls --json | jq -r '.[] | select(.name == "yomiyasu").path')/scripts/yomiyasu_lint.py" --strict`,
+      ],
+      renovate: "renovate-config-validator --strict",
+      fallow: [
+        "fallow --skip dupes --fail-on-issues --quiet --format compact",
+        "fallow dead-code --no-production --fail-on-issues --quiet --format compact",
+        "fallow dead-code --no-production --quiet --format json | jq -e '[.prop_drilling_chains, .thin_wrappers, .duplicate_prop_shapes] | all(length == 0)' > /dev/null",
+        "fallow dupes --fail-on-issues --quiet --format compact",
+        "fallow security --fail-on-issues --quiet",
+      ],
       "actions-lint": {
         command:
           'uvx --from actionlint-py@1.7.12.25 actionlint && uvx zizmor@1.32.0 $(test -n "$CLAUDE_CODE_REMOTE" && echo --no-online-audits) .github && ast-grep scan --rule .github/rules/no-full-history-checkout.yml .github/workflows',
@@ -231,18 +245,17 @@ export default defineConfig({
           ],
         },
         dependsOn: [
-          "test-all",
+          "test",
           "syncpack",
           "markdown-lint",
           "renovate",
           "actions-lint",
-          "fallow-all",
+          "fallow",
           "audit",
         ],
       },
-      "test-all": "vp run -r test",
+      test: { command: "vp test run", cache: false },
       syncpack: "syncpack lint",
-      "fallow-all": "vp run -r fallow",
       audit: {
         command:
           'before="$(cksum pnpm-workspace.yaml)"; vp pm audit --fix || exit; if [ "$before" != "$(cksum pnpm-workspace.yaml)" ]; then echo "vp pm audit --fix rewrote pnpm-workspace.yaml. Run vp install and commit the diff." >&2; exit 1; fi',

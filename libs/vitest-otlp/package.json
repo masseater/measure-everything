@@ -58,10 +58,7 @@
     "provenance": true
   },
   "scripts": {
-    "build": "vp pack",
-    "generate": "buf generate",
-    "test": "vp test run",
-    "prepack": "vp run build"
+    "prepack": "vp pack"
   },
   "dependencies": {
     "@bufbuild/protobuf": "catalog:",

@@ -9,6 +9,8 @@ import { Miniflare } from "miniflare";
 import { build } from "vite-plus";
 import { expect, test } from "vite-plus/test";
 
+import { COMPATIBILITY_DATE } from "./compatibility.ts";
+
 const FIXTURE = fileURLToPath(import.meta.resolve("./fixture/fixture.worker.ts"));
 const WORKER_CONDITIONS = ["workerd", "worker", "browser", "import", "default"];
 
@@ -51,7 +53,7 @@ const withMiniflare = Effect.acquireRelease(
             {
               name: "app",
               modules: [{ type: "ESModule", path: "worker.mjs", contents: script }],
-              compatibilityDate: "2026-10-30",
+              compatibilityDate: COMPATIBILITY_DATE,
               kvNamespaces: ["CACHE"],
               streamingTails: [tail.name],
             },
@@ -137,6 +139,17 @@ test("an Elysia request is a span named after its route", () =>
       where: (span) => span.name === "greeting.save" && span.parentSpanId === route.spanId,
     });
     expect(saves).toMatchObject([{ attributes: { "greeting.key": "item-42" } }]);
+  }).pipe(Effect.scoped, Effect.runPromise));
+
+test("a compiled Elysia app, as Workers export it, is a span named after its route", () =>
+  Effect.gen(function* compiledSpan() {
+    const miniflare = yield* withMiniflare;
+    yield* get(miniflare, "/compiled/7");
+    const route = yield* oneSpan((span) => span.name === "GET /compiled/:id");
+    const loads = yield* waitForSpans({
+      where: (span) => span.name === "compiled.load" && span.parentSpanId === route.spanId,
+    });
+    expect(loads).toMatchObject([{ name: "compiled.load" }]);
   }).pipe(Effect.scoped, Effect.runPromise));
 
 test("TanStack Start requests and server functions are spans", () =>

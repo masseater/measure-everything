@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.1.0](https://github.com/masseater/measure-everything/compare/v0.0.7...v0.1.0) (2026-11-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **workers-tracing:** withWorkersTracing is curried and takes { destinations }; TRACE_DESTINATION and the fixed masseater-dev-traces destination are gone. tracedHandle and elysiaTracing are replaced by Elysia from the package, and the Effect tracer is applied through run and runner.
+
+### Features
+
+* **workers-tracing:** bring back routeHandlers for TanStack Start API routes ([#68](https://github.com/masseater/measure-everything/issues/68)) ([12ea32a](https://github.com/masseater/measure-everything/commit/12ea32a71da269c87a19462477aaeba193443e31))
+* **workers-tracing:** make tracing automatic and usable outside one account ([#67](https://github.com/masseater/measure-everything/issues/67)) ([96c26e6](https://github.com/masseater/measure-everything/commit/96c26e6d52db2010e35390bf5957896dcba35916))
+
+
+### Bug Fixes
+
+* satisfy the new @effect/tsgo yield-in-call-argument and global-json rules ([#66](https://github.com/masseater/measure-everything/issues/66)) ([3cce0bf](https://github.com/masseater/measure-everything/commit/3cce0bf75215d6758185afe0ab81339719df490e))
+* **workers-traces:** name the missing spans when the check fails ([#65](https://github.com/masseater/measure-everything/issues/65)) ([f9d96dd](https://github.com/masseater/measure-everything/commit/f9d96dd6c03b038a5b9cd619df2947fc23eaa20e))
+* **workers-tracing:** let the lint preset allow type imports of Elysia ([#69](https://github.com/masseater/measure-everything/issues/69)) ([fe94e4e](https://github.com/masseater/measure-everything/commit/fe94e4ea6f64f2b38ef4ef18af112cb43eb77474))
+
 ## [0.0.7](https://github.com/masseater/measure-everything/compare/v0.0.6...v0.0.7) (2026-11-06)
 
 

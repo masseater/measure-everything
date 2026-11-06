@@ -13,11 +13,15 @@ Effect spans, requests, server functions and Elysia routes then join the
 platform's own spans in one trace. Do not build an Effect tracer
 or a span middleware per repository.
 
-In an Alchemy stack, wrap the providers with its `withWorkersTracing`. Do not
-write `observability` and a compatibility date on each Worker. A Worker added
-later is then traced without anyone remembering to. After each deploy, run
-`workers-traces --request <url> --expect <span> --wait <seconds>`. A span that
-stops arriving then fails the deploy job.
+In an Alchemy stack, pass the providers through its `withWorkersTracing({
+destinations })`. Do not write `observability` and a compatibility date on each
+Worker. A Worker added later is then traced without anyone remembering to. Run
+every Effect with its `run` or `runner`, and import `Elysia` from it. Add its
+oxlint preset, so that code which skips tracing fails the lint.
+
+To check spans in CI, deploy its `traceSink` once per account. Then run
+`workers-traces --request <url> --expect <span> --wait <seconds>` after each
+deploy. A span that stops arriving then fails the deploy job.
 
 Send traces and logs to an OTLP backend through
 [export

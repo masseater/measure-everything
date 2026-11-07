@@ -280,8 +280,8 @@ catalogs:
       specifier: 3.39.0
       version: 3.39.0
     renovate:
-      specifier: 44.213.0
-      version: 44.213.0
+      specifier: 44.215.0
+      version: 44.215.0
     textlint:
       specifier: 15.8.0
       version: 15.8.0
@@ -379,7 +379,7 @@ importers:
         version: 1.91.0
       renovate:
         specifier: catalog:stack
-        version: 44.213.0(supports-color@7.2.0)(typanion@3.14.0)
+        version: 44.215.0(supports-color@7.2.0)(typanion@3.14.0)
       skills:
         specifier: 'catalog:'
         version: 1.7.6
@@ -1083,6 +1083,15 @@ packages:
 
   '@containerbase/base@14.63.1':
     resolution: {integrity: sha512-/Gvs9rS2cH+upyMeaWY9he/9/KwJwe6+Kp5mPWr5FDGWRJOGNH/IaT4msHaOlkX3ymWFgCZLxYlVE06DMUzFBg==}
+    engines: {node: '>=24.10.0'}
+    peerDependencies:
+      zod: ^4.0.0
+    peerDependenciesMeta:
+      zod:
+        optional: true
+
+  '@containerbase/base@14.64.0':
+    resolution: {integrity: sha512-NwbnZQktQDhJulr4Z23rLsHrbcFAMP7OqcsmwE0QQaTI4iNUPgcnMyyWRhyl6vgmvflf3oiJXMtLePDCGS+gmQ==}
     engines: {node: '>=24.10.0'}
     peerDependencies:
       zod: ^4.0.0
@@ -2753,8 +2762,8 @@ packages:
     peerDependencies:
       '@redis/client': ^6.2.1
 
-  '@renovatebot/base-image@13.157.1':
-    resolution: {integrity: sha512-r0+kRMIAP8sOpupBoY1vXXNiIZY7Z16xpy+iqi/9xp8Ao1U9TYw6LuFSTJ4+XDgQPePrQplQ5IUfEtLW7pNYew==}
+  '@renovatebot/base-image@13.158.0':
+    resolution: {integrity: sha512-KcyyZu2E8cLfsp7/H0C80krvoFgIjFFLOuTGPq/zbXJRFl2q1uEfod1kvrn89IYIeFInCUWV+EPGfjl7mxn9jA==}
     engines: {node: '>=24.10.0'}
     peerDependencies:
       zod: ^4.0.0
@@ -6730,8 +6739,8 @@ packages:
   remark@15.0.1:
     resolution: {integrity: sha512-Eht5w30ruCXgFmxVUSlNWQ9iiimq07URKeFS3hNc8cUWy1llX4KDWfyEDZRycMc+znsN9Ux5/tJ/BFdgdOwA3A==}
 
-  renovate@44.213.0:
-    resolution: {integrity: sha512-MoNrDmDnQ3L5l6ozVqH0l43ucUkRfRYON/6gPRYKvccm3WT8qLyxt81UTxM4Or2h8+MLmQzKHE03/5nfW7r3yg==}
+  renovate@44.215.0:
+    resolution: {integrity: sha512-Ctp7PBdBEYpg3U5gXngf2Mr/J5cwClttfcYXb4ooWiQStIDNkSpPNm7WeDaLsgAcmRiTSAYmHleCXFnnlitsEg==}
     engines: {node: ^24.11.0, pnpm: ^11.0.0}
     hasBin: true
 
@@ -8677,6 +8686,12 @@ snapshots:
     optionalDependencies:
       zod: 4.6.7
 
+  '@containerbase/base@14.64.0(zod@4.6.7)':
+    dependencies:
+      semver: 7.8.5
+    optionalDependencies:
+      zod: 4.6.7
+
   '@conventional-changelog/git-client@3.1.2(conventional-commits-parser@7.1.2)':
     dependencies:
       '@simple-libs/child-process-utils': 2.0.0
@@ -9987,9 +10002,9 @@ snapshots:
     dependencies:
       '@redis/client': 6.2.1(@opentelemetry/api@1.10.0)
 
-  '@renovatebot/base-image@13.157.1(zod@4.6.7)':
+  '@renovatebot/base-image@13.158.0(zod@4.6.7)':
     dependencies:
-      '@containerbase/base': 14.63.1(zod@4.6.7)
+      '@containerbase/base': 14.64.0(zod@4.6.7)
     optionalDependencies:
       zod: 4.6.7
 
@@ -14644,7 +14659,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  renovate@44.213.0(supports-color@7.2.0)(typanion@3.14.0):
+  renovate@44.215.0(supports-color@7.2.0)(typanion@3.14.0):
     dependencies:
       '@aws-sdk/client-codecommit': 3.1139.0
       '@aws-sdk/client-ec2': 3.1139.0
@@ -14677,7 +14692,7 @@ snapshots:
       '@pnpm/parse-overrides': 1001.0.4
       '@qnighy/marshal': 0.1.3
       '@redis/client': 6.3.0(@opentelemetry/api@1.10.0)
-      '@renovatebot/base-image': 13.157.1(zod@4.6.7)
+      '@renovatebot/base-image': 13.158.0(zod@4.6.7)
       '@renovatebot/detect-tools': 5.0.0
       '@renovatebot/good-enough-parser': 4.0.3
       '@renovatebot/osv-offline': 4.5.10(supports-color@7.2.0)(zod@4.6.7)

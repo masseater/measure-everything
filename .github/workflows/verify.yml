@@ -18,7 +18,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup
-      - uses: masseater/typescript-template/.github/actions/verify@b3f71994bfe791783b8cb290f532f1494bac58bc
+      - uses: masseater/typescript-template/.github/actions/verify@efe45eab5cdebb68c802540c86c2f229c67220fa
         with:
           github-token: ${{ github.token }}
 
@@ -88,6 +88,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@b3f71994bfe791783b8cb290f532f1494bac58bc
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@efe45eab5cdebb68c802540c86c2f229c67220fa
         with:
           github-token: ${{ github.token }}

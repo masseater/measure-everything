@@ -3,10 +3,13 @@
   "production": true,
   "typeAware": { "enabled": true, "require": "complete" },
   "failOnParseError": true,
-  "ignoreDependencies": ["publint", "@arethetypeswrong/core"],
+  "ignoreDependencies": ["publint", "@arethetypeswrong/core", "@effect/language-service"],
   "ignorePatterns": [".claude/**"],
   "dynamicallyLoaded": ["libs/workers-tracing/src/fixture/*.worker.ts"],
-  "ignoreExports": [{ "file": "libs/vitest-otlp/src/generated/**", "exports": ["*"] }],
+  "ignoreExports": [
+    { "file": "libs/vitest-otlp/src/generated/**", "exports": ["*"] },
+    { "file": "libs/workers-tracing/src/tanstack-start.plain.ts", "exports": ["traceServerFn"] },
+  ],
   "overrides": [
     { "files": ["libs/vitest-otlp/src/generated/**"], "rules": { "unused-enum-members": "off" } },
   ],

@@ -1,5 +1,11 @@
 # measure-everything
 
+This repository moved to
+[masseater/masseater.dev](https://github.com/masseater/masseater.dev) and is
+archived. The packages are in its `libs/vitest-otlp`, `libs/web-vitals-flow`
+and `libs/workers-tracing`, and keep their npm names. The `measure-everything`
+skill moved to [masseater/skills](https://github.com/masseater/skills).
+
 In AI-era development, the most important thing is not implementation but
 measurement. An agent can only fix what it can see. So everything it builds has
 to be measurable where it really runs.

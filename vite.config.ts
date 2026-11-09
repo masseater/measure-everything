@@ -20,6 +20,8 @@ import {
 } from "./lint.config.ts";
 import { readonlyParameterTypes } from "./readonly.config.ts";
 
+const typedRules = "@r_masseater/oxlint-typed-rules";
+
 export default defineConfig({
   test: { projects: ["apps/*", "libs/*", "infra/*", "tools/*"], passWithNoTests: true },
   staged: {
@@ -59,11 +61,11 @@ export default defineConfig({
     },
     jsPlugins: [
       { name: "vite-plus", specifier: "vite-plus/oxlint-plugin" },
-      { name: "tanstack-query", specifier: "@tanstack/eslint-plugin-query" },
-      { name: "tanstack-router", specifier: "@tanstack/eslint-plugin-router" },
-      { name: "drizzle", specifier: "eslint-plugin-drizzle" },
+      { name: "tanstack-query", specifier: `${typedRules}/tanstack-query` },
+      { name: "tanstack-router", specifier: `${typedRules}/tanstack-router` },
+      { name: "drizzle", specifier: `${typedRules}/drizzle` },
       { name: "react-hooks-js", specifier: "eslint-plugin-react-hooks" },
-      { name: "@eslint-react", specifier: "@eslint-react/eslint-plugin" },
+      { name: "@eslint-react", specifier: `${typedRules}/react` },
       { name: "shadcn", specifier: "@shadcn/lint" },
       { name: "no-comments", specifier: "eslint-plugin-no-comments" },
       { name: "baseline-js", specifier: "eslint-plugin-baseline-js" },

@@ -180,8 +180,8 @@ catalogs:
       specifier: 2.17.0
       version: 2.17.0
     '@cloudflare/workers-types':
-      specifier: 5.20261104.1
-      version: 5.20261104.1
+      specifier: 5.20261106.1
+      version: 5.20261106.1
     '@commitlint/cli':
       specifier: 21.2.4
       version: 21.2.4
@@ -256,8 +256,8 @@ catalogs:
       specifier: 1.0.0-rc.18
       version: 1.0.0-rc.18
     '@effect/tsgo':
-      specifier: 0.67.3
-      version: 0.67.3
+      specifier: 0.67.4
+      version: 0.67.4
     '@tanstack/react-start':
       specifier: 1.169.4
       version: 1.169.4
@@ -271,8 +271,8 @@ catalogs:
       specifier: 3.40.0
       version: 3.40.0
     renovate:
-      specifier: 44.221.1
-      version: 44.221.1
+      specifier: 44.221.3
+      version: 44.221.3
     textlint:
       specifier: 15.8.0
       version: 15.8.0
@@ -297,7 +297,7 @@ overrides:
   re2js@>=2.2.0 <2.8.7: ^2.8.7
   sharp@<0.35.5: ^0.35.5
   undici@>=7.0.0 <7.30.1: ^8.0.0
-  workerd: 1.20261104.1
+  workerd: 1.20261106.1
 
 packageExtensionsChecksum: sha256-UoeDPdVJlHAcCJ2gi51cFcqdMlCrOXaY2vq0XL5Rcuw=
 
@@ -316,7 +316,7 @@ importers:
         version: 21.2.4
       '@effect/tsgo':
         specifier: catalog:stack
-        version: 0.67.3
+        version: 0.67.4
       '@html-eslint/eslint-plugin-react':
         specifier: 'catalog:'
         version: 0.67.0(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
@@ -361,7 +361,7 @@ importers:
         version: 1.91.0
       renovate:
         specifier: catalog:stack
-        version: 44.221.1(supports-color@7.2.0)(typanion@3.14.0)
+        version: 44.221.3(supports-color@7.2.0)(typanion@3.14.0)
       skills:
         specifier: 'catalog:'
         version: 1.7.6
@@ -401,7 +401,7 @@ importers:
     devDependencies:
       '@effect/tsgo':
         specifier: catalog:stack
-        version: 0.67.3
+        version: 0.67.4
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
@@ -429,7 +429,7 @@ importers:
         version: 2.17.0(@bufbuild/protobuf@2.17.0)(supports-color@7.2.0)
       '@cloudflare/workers-types':
         specifier: 'catalog:'
-        version: 5.20261104.1
+        version: 5.20261106.1
       '@opentelemetry/api':
         specifier: 1.10.0
         version: 1.10.0
@@ -491,7 +491,7 @@ importers:
         version: 0.18.5
       '@cloudflare/workers-types':
         specifier: 'catalog:'
-        version: 5.20261104.1
+        version: 5.20261106.1
       '@r_masseater/vitest-otlp':
         specifier: workspace:*
         version: link:../vitest-otlp
@@ -956,43 +956,43 @@ packages:
     resolution: {integrity: sha512-JBP1+Z7ZSNG/d4mRP+y8VC5dka3tZVMLEZRvS+rzQ4DGV1EoxRFQckcJTTkXbHSQiTj0DtNI01Zwb/V2fX0mvQ==}
     peerDependencies:
       unenv: 2.0.0-rc.24
-      workerd: 1.20261104.1
+      workerd: 1.20261106.1
     peerDependenciesMeta:
       workerd:
         optional: true
 
-  '@cloudflare/workerd-darwin-64@1.20261104.1':
-    resolution: {integrity: sha512-5Bl+P1HT1/Ezk7Yrhyd+QkJ4VC/3naO0L3so/AkpgdaAHG3bmUmcCJBAtwH7O4JdVt8SMfm6EV89seiPpdjHJQ==}
+  '@cloudflare/workerd-darwin-64@1.20261106.1':
+    resolution: {integrity: sha512-6ntH6uUcK35s0ASAq7EK9RqdAKUfqBKQAGBWNfWEVaEpq9U/72Ej/mQbTzIG0dOfpXGJEkx6657fG3RbJ2697A==}
     engines: {node: '>=16'}
     cpu: [x64]
     os: [darwin]
 
-  '@cloudflare/workerd-darwin-arm64@1.20261104.1':
-    resolution: {integrity: sha512-2fM+0klAjspAQ3Jl0iw0gVyGpNnkvPiZ50WHigPLhWQRiS+zhabFXVR07zz1RaPGkJHrMjEpWoEfjjm8nU5IOg==}
+  '@cloudflare/workerd-darwin-arm64@1.20261106.1':
+    resolution: {integrity: sha512-JV2/mFzpABuFtV6cHLS5q/SgNke84Zc5tVoXg/6mgVdIDZyaS0ReJxFmwhT855t4kJKGw9iviuwpllmsywQ/zA==}
     engines: {node: '>=16'}
     cpu: [arm64]
     os: [darwin]
 
-  '@cloudflare/workerd-linux-64@1.20261104.1':
-    resolution: {integrity: sha512-VgpZIOooZHjSxjEZIJ1hkyt/jTfL3KeavkWCc0x7xxVu9zgkplaJF78Iv6CzoCTamQXyZeBaRQHS2bbAc70Vgg==}
+  '@cloudflare/workerd-linux-64@1.20261106.1':
+    resolution: {integrity: sha512-yRAKuderf90qBO/K8r6uIwVdNo5Akh2Fv9a6KPbiSABMCXdBR7zkF+fCG/dbaHqs9YXMbIhroJmcqRZUiMpHSQ==}
     engines: {node: '>=16'}
     cpu: [x64]
     os: [linux]
 
-  '@cloudflare/workerd-linux-arm64@1.20261104.1':
-    resolution: {integrity: sha512-uEBJJHh2SbeQauRGrad7tIFIrpUQ5LUqZX40l7IKwYd0yeemvsno8f57w34Bx/pPpaSsNYVcV5oNFVbv+v/BOw==}
+  '@cloudflare/workerd-linux-arm64@1.20261106.1':
+    resolution: {integrity: sha512-QkXgRV35gihA75nRlLPzcSGPHt86wTJS9jPIZbTGGgG/V1Qh4psc8zLztnzZMLEBPPnr7aAb6S7gseH9c/i4kw==}
     engines: {node: '>=16'}
     cpu: [arm64]
     os: [linux]
 
-  '@cloudflare/workerd-windows-64@1.20261104.1':
-    resolution: {integrity: sha512-b/fnEU1leVm8UrI2EHQ4MSrK2vmnWdR1jefRyEUDZe3ucpKY0PWi4bVxWh5niZdlL0MIc4C5tXNXTlAMZpKDdA==}
+  '@cloudflare/workerd-windows-64@1.20261106.1':
+    resolution: {integrity: sha512-bRl5t/5a0ovliA+ksjAPspk2s4RX0RafsO5NN1NHS5lnrFxGqr5c+NtxlTnRodJxTUsQ7yZPeBgVCuthlPNrLA==}
     engines: {node: '>=16'}
     cpu: [x64]
     os: [win32]
 
-  '@cloudflare/workers-types@5.20261104.1':
-    resolution: {integrity: sha512-XSPcK88JXnW/oC82wuXvaP7vgyk2myydugbgOd/RcLKwqkwW0cP09Ozp9ItACa4IAZ7uKtMIfxZpUTXajYVd1Q==}
+  '@cloudflare/workers-types@5.20261106.1':
+    resolution: {integrity: sha512-uQtZyYehF0hwImaFi0/z/BWeTC/DMKpEo+nCySs5WZwoMhnIqLnN3sVjS7GCBc222EWf+F6khsHPWIvPEaP6JA==}
 
   '@commitlint/cli@21.2.4':
     resolution: {integrity: sha512-g3M/wrQdElqGH5vROIeL2QiYIxrzqUkhCgsDyDlWfKEyQdCt10OyMB28W2cJtpZ+VNGMvmaN923infr1hOfyrg==}
@@ -1063,8 +1063,8 @@ packages:
     resolution: {integrity: sha512-sGEA473TlCvhCGNoTBY9OXZVWdscIXdGt0dm8EpB+2MRfmt8LNh/X56P/T3nCtEB+eH5qGEa3odphSAoUxSfSQ==}
     engines: {node: '>=22.12.0'}
 
-  '@containerbase/base@14.63.1':
-    resolution: {integrity: sha512-/Gvs9rS2cH+upyMeaWY9he/9/KwJwe6+Kp5mPWr5FDGWRJOGNH/IaT4msHaOlkX3ymWFgCZLxYlVE06DMUzFBg==}
+  '@containerbase/base@14.66.3':
+    resolution: {integrity: sha512-2SvZfmJKOw2gHKtIQcrBb+4dMb/sweh0nzdfyZ1ulCERoqRyeaX2BtFUf9aekY4KOYucehGIZFCTMMIic85HFg==}
     engines: {node: '>=24.10.0'}
     peerDependencies:
       zod: ^4.0.0
@@ -1072,8 +1072,8 @@ packages:
       zod:
         optional: true
 
-  '@containerbase/base@14.66.3':
-    resolution: {integrity: sha512-2SvZfmJKOw2gHKtIQcrBb+4dMb/sweh0nzdfyZ1ulCERoqRyeaX2BtFUf9aekY4KOYucehGIZFCTMMIic85HFg==}
+  '@containerbase/base@14.66.4':
+    resolution: {integrity: sha512-YeR8U7ht8EsHpwU0cd3Ig3d7n0kFdF2RYrUdRuLZoAgKeRk9zI5gE88IwE+sLF/Y19EBdm58fB8weTo07dyK+A==}
     engines: {node: '>=24.10.0'}
     peerDependencies:
       zod: ^4.0.0
@@ -1152,43 +1152,43 @@ packages:
     peerDependencies:
       effect: 4.1.2
 
-  '@effect/tsgo-darwin-arm64@0.67.3':
-    resolution: {integrity: sha512-9GnBnz1vuqRQ8fvxwNEYlnLqYXzASbABGzk1H9YXMnC34TlRmVTKquQ1muPOiIGskb2XhmoqBQBN7GiQWNqxEg==}
+  '@effect/tsgo-darwin-arm64@0.67.4':
+    resolution: {integrity: sha512-DI1/t3HQ2utqAWVH9KviuZc85t3yBiuNK4oKE2kMDBfjSlYLz67pcACUjKODH0nhD0I268PPyFphsKrNvyd0zg==}
     cpu: [arm64]
     os: [darwin]
 
-  '@effect/tsgo-darwin-x64@0.67.3':
-    resolution: {integrity: sha512-i02pQfv41x3MPqjh+2V6lPTkXZxWzG0NKuftpv/Mfq+VMbVqASZqOqS+CR4kHhE7aZcEpgHyb3ytSSSa94J0Hw==}
+  '@effect/tsgo-darwin-x64@0.67.4':
+    resolution: {integrity: sha512-WT/PnPdqOX/BqKGmmDrw9yOt7fBtsisS73URJmudaoeYdgVgpV4KoRjy0P6V2QiKoBQLS3UM3v7kuzc+yHvhvA==}
     cpu: [x64]
     os: [darwin]
 
-  '@effect/tsgo-linux-arm64@0.67.3':
-    resolution: {integrity: sha512-aydOt1en+fo8zrXR6VccbmZZo070osDz7sJHrWYqD7LwLL0YuYNKlxT+ahGDB9goFFxE19F/K7mxah4zL0TRgA==}
+  '@effect/tsgo-linux-arm64@0.67.4':
+    resolution: {integrity: sha512-OUvjVbjzu29fTfaf1bn3d3+HAw++Fg6eDpqz5LUGMwfzcguar4TK+g0cEXCSGz0R39BvWpu3+RLuDrjdXIOZxg==}
     cpu: [arm64]
     os: [linux]
 
-  '@effect/tsgo-linux-arm@0.67.3':
-    resolution: {integrity: sha512-nwuNsWuEYC6a83MeiEV82+ErRTTX/7g9UNYkIp8zK4ldgIukeij5lFsnx2eCJJhHojiqZlmmnq+35vW+DRVYkw==}
+  '@effect/tsgo-linux-arm@0.67.4':
+    resolution: {integrity: sha512-YK19SF0aMCv4qjJ8s//xzqIxeo5/0OHUEKF27ykaw3rglj6dYgVZO0YdUnxgiNK3gQSuaR9trm10bSU2czKV0w==}
     cpu: [arm]
     os: [linux]
 
-  '@effect/tsgo-linux-x64@0.67.3':
-    resolution: {integrity: sha512-csK8tTycGZpaneCPUk+QcA8CBcDqaNeZmKtjloJi7jdlSScFDrZp3JPgy5KFWjt4vFsn9bGGDNR6dXUpWpM9Mg==}
+  '@effect/tsgo-linux-x64@0.67.4':
+    resolution: {integrity: sha512-672VKtYcr1Nzsd4G3gh4FIK45RatXkuOS2K/H26cGxSXuibVk0h8PgRcJWpZ3YUyO+8mm1FB/W/4IoPeiXHwog==}
     cpu: [x64]
     os: [linux]
 
-  '@effect/tsgo-win32-arm64@0.67.3':
-    resolution: {integrity: sha512-vX/ZviuQKqJIs54xwBNt10mm1xZ1CdVdyhIC/k2S//+psQUd7glpiI0lXEjyq7w7srLjL3AXv10E03I8sr3DXA==}
+  '@effect/tsgo-win32-arm64@0.67.4':
+    resolution: {integrity: sha512-HIDIJjAWZBNFxvf2Sk6fcZReW2/y/IRxEFP3NH93lzWKYqbFFNStze87/Ez1glh8K4hizbiqhhkohBLZVccKWQ==}
     cpu: [arm64]
     os: [win32]
 
-  '@effect/tsgo-win32-x64@0.67.3':
-    resolution: {integrity: sha512-5Yop4EohYfmDzpg15kBz0ja1J4fmmrCN1ft91CiBGzp7kKiuY9im4g17ECXG2E8RfEGjo2Wyk3DBgrFWn9U85A==}
+  '@effect/tsgo-win32-x64@0.67.4':
+    resolution: {integrity: sha512-kRuQnXwZNDvOMpFSfd0+lMNVk7+61jRXkhcJ4b1sfdaJXmkRQeinLZlJAIl/CQPm/g3mdPId5f0PrbZZfzGIyg==}
     cpu: [x64]
     os: [win32]
 
-  '@effect/tsgo@0.67.3':
-    resolution: {integrity: sha512-ZGJNKmkk2ieOwsf2J14xiDrZgA+qegm3QkfO+2Q4cL1w+oA1mjlrDL2YSDznCiswpmifNXpL9ayvD1Pby2FdCQ==}
+  '@effect/tsgo@0.67.4':
+    resolution: {integrity: sha512-p3TjL/46B8eLq2h5KpX0JgL8iREyb5CU9D+bMk+Y+YKAxlQDn2ebqDqMrB3Q6aHSm91QTQIdbrd5q+mf5p2vwQ==}
     hasBin: true
 
   '@emnapi/runtime@1.11.3':
@@ -2762,8 +2762,8 @@ packages:
     peerDependencies:
       '@redis/client': ^6.2.1
 
-  '@renovatebot/base-image@13.160.6':
-    resolution: {integrity: sha512-/3KhYMrKyI1a20Y5e0M9CjmBv/pnTMYrZAi53RoLTgCxVfCeXga/taRTh4TDTBTsadt+GyJcpNy29mgMWsn4Eg==}
+  '@renovatebot/base-image@13.160.8':
+    resolution: {integrity: sha512-nYHKxVeEcbvKJGPT4vgFfX+9niXAv+eyAn+ut1Mr8Zh0UFCrkD074DhDNPIZTRA99EhwEPQ1irm/gD5QeCcCPw==}
     engines: {node: '>=24.10.0'}
     peerDependencies:
       zod: ^4.0.0
@@ -6586,8 +6586,8 @@ packages:
   remark@15.0.1:
     resolution: {integrity: sha512-Eht5w30ruCXgFmxVUSlNWQ9iiimq07URKeFS3hNc8cUWy1llX4KDWfyEDZRycMc+znsN9Ux5/tJ/BFdgdOwA3A==}
 
-  renovate@44.221.1:
-    resolution: {integrity: sha512-bAb10OMxQbpViR7hF79b/sQ4s9mfWQbK1nXXRsu6HXMargteXA5+Di5AiH4zdAhuX7uzYgHXOiv+FmNqS5bGJw==}
+  renovate@44.221.3:
+    resolution: {integrity: sha512-wgEEXA5F4l7gr20R9eh9zfPb5I44dA1i005+MgBBOwD85wyYlMXv+JMcpSPiMGzbom8K5qHrj3r4t0ZI186KdQ==}
     engines: {node: ^24.11.0 || ^26.13.0, pnpm: ^11.0.0}
     hasBin: true
 
@@ -7559,8 +7559,8 @@ packages:
   wordwrap@1.0.0:
     resolution: {integrity: sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==}
 
-  workerd@1.20261104.1:
-    resolution: {integrity: sha512-JuiKY9k/4V4UE2xsupaTvZ1SF6o2a8sg+/zfq/DaSDwvH+o7t2ZEFuIWNEnryfeFdP47/tz/p828Kvl4ptPlrA==}
+  workerd@1.20261106.1:
+    resolution: {integrity: sha512-zz9nOzjBseHcdJpWhJIT6kyz6RB/zLGEDuyFdWsxkndfqWrlDJYwlcoFoEdfnYBRJxFfpl9nCuBqbT+pwrBdAw==}
     engines: {node: '>=16'}
     hasBin: true
 
@@ -7745,7 +7745,7 @@ snapshots:
   '@alchemy.run/cloudflare-runtime@2.0.0-beta.85(@distilled.cloud/cloudflare@1.0.0-rc.18(effect@4.1.2))(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@1.5.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@5.4.5)(yaml@2.9.1))(effect@4.1.2)(rolldown@1.2.13)(typescript@5.4.5)':
     dependencies:
       '@alchemy.run/node-utils': 2.0.0-beta.85
-      '@cloudflare/unenv-preset': 2.16.2(unenv@2.0.0-rc.24)(workerd@1.20261104.1)
+      '@cloudflare/unenv-preset': 2.16.2(unenv@2.0.0-rc.24)(workerd@1.20261106.1)
       '@distilled.cloud/cloudflare': 1.0.0-rc.18(effect@4.1.2)
       '@puppeteer/browsers': 3.2.6(yauzl@3.4.0)
       capnp-es: 0.0.16(typescript@5.4.5)
@@ -7754,7 +7754,7 @@ snapshots:
       mime: 4.1.2
       sharp: 0.35.5(@types/node@26.6.6)
       unenv: 2.0.0-rc.24
-      workerd: 1.20261104.1
+      workerd: 1.20261106.1
       yauzl: 3.4.0
     optionalDependencies:
       '@effect/platform-node': 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -7768,7 +7768,7 @@ snapshots:
   '@alchemy.run/cloudflare-runtime@2.0.0-beta.85(@distilled.cloud/cloudflare@1.0.0-rc.18(effect@4.1.2))(@effect/platform-node@4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@1.5.0(@arethetypeswrong/core@0.18.5)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.2)(rolldown@1.2.13)(typescript@7.1.0-beta)':
     dependencies:
       '@alchemy.run/node-utils': 2.0.0-beta.85
-      '@cloudflare/unenv-preset': 2.16.2(unenv@2.0.0-rc.24)(workerd@1.20261104.1)
+      '@cloudflare/unenv-preset': 2.16.2(unenv@2.0.0-rc.24)(workerd@1.20261106.1)
       '@distilled.cloud/cloudflare': 1.0.0-rc.18(effect@4.1.2)
       '@puppeteer/browsers': 3.2.6(yauzl@3.4.0)
       capnp-es: 0.0.16(typescript@7.1.0-beta)
@@ -7777,7 +7777,7 @@ snapshots:
       mime: 4.1.2
       sharp: 0.35.5(@types/node@26.6.6)
       unenv: 2.0.0-rc.24
-      workerd: 1.20261104.1
+      workerd: 1.20261106.1
       yauzl: 3.4.0
     optionalDependencies:
       '@effect/platform-node': 4.1.2(effect@4.1.2)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -8385,28 +8385,28 @@ snapshots:
     dependencies:
       fs-extra: 11.3.0
 
-  '@cloudflare/unenv-preset@2.16.2(unenv@2.0.0-rc.24)(workerd@1.20261104.1)':
+  '@cloudflare/unenv-preset@2.16.2(unenv@2.0.0-rc.24)(workerd@1.20261106.1)':
     dependencies:
       unenv: 2.0.0-rc.24
     optionalDependencies:
-      workerd: 1.20261104.1
+      workerd: 1.20261106.1
 
-  '@cloudflare/workerd-darwin-64@1.20261104.1':
+  '@cloudflare/workerd-darwin-64@1.20261106.1':
     optional: true
 
-  '@cloudflare/workerd-darwin-arm64@1.20261104.1':
+  '@cloudflare/workerd-darwin-arm64@1.20261106.1':
     optional: true
 
-  '@cloudflare/workerd-linux-64@1.20261104.1':
+  '@cloudflare/workerd-linux-64@1.20261106.1':
     optional: true
 
-  '@cloudflare/workerd-linux-arm64@1.20261104.1':
+  '@cloudflare/workerd-linux-arm64@1.20261106.1':
     optional: true
 
-  '@cloudflare/workerd-windows-64@1.20261104.1':
+  '@cloudflare/workerd-windows-64@1.20261106.1':
     optional: true
 
-  '@cloudflare/workers-types@5.20261104.1': {}
+  '@cloudflare/workers-types@5.20261106.1': {}
 
   '@commitlint/cli@21.2.4(conventional-commits-parser@7.1.2)(typescript@7.1.0-beta)':
     dependencies:
@@ -8515,13 +8515,13 @@ snapshots:
       conventional-commits-parser: 7.1.2
       picocolors: 1.1.1
 
-  '@containerbase/base@14.63.1(zod@4.6.7)':
+  '@containerbase/base@14.66.3(zod@4.6.7)':
     dependencies:
       semver: 7.8.5
     optionalDependencies:
       zod: 4.6.7
 
-  '@containerbase/base@14.66.3(zod@4.6.7)':
+  '@containerbase/base@14.66.4(zod@4.6.7)':
     dependencies:
       semver: 7.8.5
     optionalDependencies:
@@ -8594,39 +8594,39 @@ snapshots:
 
   '@effect/sql-d1@4.1.2(effect@4.1.2)':
     dependencies:
-      '@cloudflare/workers-types': 5.20261104.1
+      '@cloudflare/workers-types': 5.20261106.1
       effect: 4.1.2
 
-  '@effect/tsgo-darwin-arm64@0.67.3':
+  '@effect/tsgo-darwin-arm64@0.67.4':
     optional: true
 
-  '@effect/tsgo-darwin-x64@0.67.3':
+  '@effect/tsgo-darwin-x64@0.67.4':
     optional: true
 
-  '@effect/tsgo-linux-arm64@0.67.3':
+  '@effect/tsgo-linux-arm64@0.67.4':
     optional: true
 
-  '@effect/tsgo-linux-arm@0.67.3':
+  '@effect/tsgo-linux-arm@0.67.4':
     optional: true
 
-  '@effect/tsgo-linux-x64@0.67.3':
+  '@effect/tsgo-linux-x64@0.67.4':
     optional: true
 
-  '@effect/tsgo-win32-arm64@0.67.3':
+  '@effect/tsgo-win32-arm64@0.67.4':
     optional: true
 
-  '@effect/tsgo-win32-x64@0.67.3':
+  '@effect/tsgo-win32-x64@0.67.4':
     optional: true
 
-  '@effect/tsgo@0.67.3':
+  '@effect/tsgo@0.67.4':
     optionalDependencies:
-      '@effect/tsgo-darwin-arm64': 0.67.3
-      '@effect/tsgo-darwin-x64': 0.67.3
-      '@effect/tsgo-linux-arm': 0.67.3
-      '@effect/tsgo-linux-arm64': 0.67.3
-      '@effect/tsgo-linux-x64': 0.67.3
-      '@effect/tsgo-win32-arm64': 0.67.3
-      '@effect/tsgo-win32-x64': 0.67.3
+      '@effect/tsgo-darwin-arm64': 0.67.4
+      '@effect/tsgo-darwin-x64': 0.67.4
+      '@effect/tsgo-linux-arm': 0.67.4
+      '@effect/tsgo-linux-arm64': 0.67.4
+      '@effect/tsgo-linux-x64': 0.67.4
+      '@effect/tsgo-win32-arm64': 0.67.4
+      '@effect/tsgo-win32-x64': 0.67.4
 
   '@emnapi/runtime@1.11.3':
     dependencies:
@@ -9841,9 +9841,9 @@ snapshots:
     dependencies:
       '@redis/client': 6.2.1(@opentelemetry/api@1.10.0)
 
-  '@renovatebot/base-image@13.160.6(zod@4.6.7)':
+  '@renovatebot/base-image@13.160.8(zod@4.6.7)':
     dependencies:
-      '@containerbase/base': 14.66.3(zod@4.6.7)
+      '@containerbase/base': 14.66.4(zod@4.6.7)
     optionalDependencies:
       zod: 4.6.7
 
@@ -9863,7 +9863,7 @@ snapshots:
 
   '@renovatebot/osv-offline-db@4.5.10(supports-color@7.2.0)(zod@4.6.7)':
     dependencies:
-      '@containerbase/base': 14.63.1(zod@4.6.7)
+      '@containerbase/base': 14.66.3(zod@4.6.7)
       debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
@@ -13519,7 +13519,7 @@ snapshots:
       '@cspotcode/source-map-support': 0.8.1
       sharp: 0.35.5(@types/node@26.6.6)
       undici: 8.12.3
-      workerd: 1.20261104.1
+      workerd: 1.20261106.1
       ws: 8.21.0
       youch: 4.1.0-beta.10
     transitivePeerDependencies:
@@ -14277,7 +14277,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  renovate@44.221.1(supports-color@7.2.0)(typanion@3.14.0):
+  renovate@44.221.3(supports-color@7.2.0)(typanion@3.14.0):
     dependencies:
       '@aws-sdk/client-codecommit': 3.1139.0
       '@aws-sdk/client-ec2': 3.1139.0
@@ -14310,7 +14310,7 @@ snapshots:
       '@pnpm/parse-overrides': 1001.0.4
       '@qnighy/marshal': 0.1.3
       '@redis/client': 6.3.1(@opentelemetry/api@1.10.0)
-      '@renovatebot/base-image': 13.160.6(zod@4.6.7)
+      '@renovatebot/base-image': 13.160.8(zod@4.6.7)
       '@renovatebot/detect-tools': 5.0.0
       '@renovatebot/good-enough-parser': 4.0.3
       '@renovatebot/osv-offline': 4.5.10(supports-color@7.2.0)(zod@4.6.7)
@@ -15714,13 +15714,13 @@ snapshots:
 
   wordwrap@1.0.0: {}
 
-  workerd@1.20261104.1:
+  workerd@1.20261106.1:
     optionalDependencies:
-      '@cloudflare/workerd-darwin-64': 1.20261104.1
-      '@cloudflare/workerd-darwin-arm64': 1.20261104.1
-      '@cloudflare/workerd-linux-64': 1.20261104.1
-      '@cloudflare/workerd-linux-arm64': 1.20261104.1
-      '@cloudflare/workerd-windows-64': 1.20261104.1
+      '@cloudflare/workerd-darwin-64': 1.20261106.1
+      '@cloudflare/workerd-darwin-arm64': 1.20261106.1
+      '@cloudflare/workerd-linux-64': 1.20261106.1
+      '@cloudflare/workerd-linux-arm64': 1.20261106.1
+      '@cloudflare/workerd-windows-64': 1.20261106.1
 
   wrap-ansi@7.0.0:
     dependencies:
